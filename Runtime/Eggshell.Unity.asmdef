@@ -1,7 +1,9 @@
 {
     "name": "Eggshell.Unity",
     "rootNamespace": "Eggshell.Unity",
-    "references": [],
+    "references": [
+        "GUID:d60799ab2a985554ea1a39cd38695018"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
@@ -13,6 +15,12 @@
     ],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.postprocessing",
+            "expression": "",
+            "define": "POST_FX"
+        }
+    ],
     "noEngineReferences": false
 }
