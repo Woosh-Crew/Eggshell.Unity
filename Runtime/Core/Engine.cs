@@ -11,7 +11,9 @@ namespace Eggshell.Unity
 {
 	/// <summary>
 	/// The Eggshell.Unity initialization point, Creates the Unity Bootstrap
-	/// and start initializing systems.
+	/// (Bootstrap depends on whether we're in editor or standalone )
+	/// and start initializing systems. Initialization gets called in both
+	/// editor and runtime.
 	/// </summary>
 	[Order( -10 )]
 	public sealed class Engine : Project
@@ -57,18 +59,37 @@ namespace Eggshell.Unity
 			#endif
 		}
 
+
+		/// <summary>
+		/// A Callback for when we have switched to play mode (in the editor)
+		/// or when we have launched the application and are ready to start
+		/// playing (at standalone)
+		/// </summary>
 		public void OnPlaying()
 		{
 			(Game ??= Setup()).OnReady();
+			
+			Terminal.Log.Entry( "Entering the Game", Level );
 		}
 
+		/// <summary>
+		/// A Callback for when we are exiting play mode (in the editor)
+		/// or when we are shutting down the application (at standalone)
+		/// </summary>
 		public void OnExiting()
 		{
 			Game?.OnShutdown();
 			Game = null;
+
+			Terminal.Log.Entry( "Exiting the Game", Level );
 		}
 
-		private Game Setup()
+		/// <summary>
+		/// Finds the right game class using Eggshell's reflection system.
+		/// if none could be fine, it'll just create a instance of the game
+		/// class itself. 
+		/// </summary>
+		private static Game Setup()
 		{
 			var game = Library.Database.Find<Game>()?.Create<Game>();
 

@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Eggshell.Diagnostics;
+using Eggshell.IO;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.LowLevel;
@@ -70,6 +71,23 @@ namespace Eggshell.Unity.Internal
 	/// </summary>
 	internal class UnityStandalone : Bootstrap
 	{
+		static UnityStandalone()
+		{
+			// -- Game Specific
+			Pathing.Add( "game", Application.dataPath );
+			Pathing.Add( "assets", Application.isEditor ? "exports://" : "game://" );
+
+			#if UNITY_EDITOR
+
+			// -- Editor Specific
+			Pathing.Add( "project", $"{Application.dataPath}/../" );
+			Pathing.Add( "exports", "project://Exports/" );
+			Pathing.Add( "compiled", "exports://<game>/" );
+			Pathing.Add( "editor", EditorApplication.applicationPath );
+
+			#endif
+		}
+
 		// Bootstrap for Unity
 
 		protected override void OnStart()
