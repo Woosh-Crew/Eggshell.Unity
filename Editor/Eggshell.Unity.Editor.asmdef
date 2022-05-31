@@ -1,0 +1,28 @@
+{
+    "name": "Eggshell.Unity.Editor",
+    "rootNamespace": "Eggshell.Unity",
+    "references": [
+        "GUID:ff4fa0a8e5fac7c4db9cf64b1efbb52d"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Eggshell.Core.dll",
+        "Eggshell.Entities.dll",
+        "Eggshell.Resources.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.postprocessing",
+            "expression": "",
+            "define": "POST_FX"
+        }
+    ],
+    "noEngineReferences": false
+}

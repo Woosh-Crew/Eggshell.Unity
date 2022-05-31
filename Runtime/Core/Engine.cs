@@ -1,4 +1,11 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using Entry = UnityEditor.InitializeOnLoadMethodAttribute;
+using Startup = Eggshell.Unity.Internal.UnityEditor;
+
+#else
+using Entry = UnityEngine.RuntimeInitializeOnLoadMethodAttribute;
+using Startup = Eggshell.Unity.Internal.UnityStandalone;
+#endif
 
 namespace Eggshell.Unity
 {
@@ -9,10 +16,10 @@ namespace Eggshell.Unity
 	[Order( -10 )]
 	public sealed class Engine : Project
 	{
-		[RuntimeInitializeOnLoadMethod( RuntimeInitializeLoadType.AfterSceneLoad )]
+		[Entry]
 		private static void Initialize()
 		{
-			Crack( new Unity() );
+			Crack( new Startup() );
 		}
 
 		// Engine
@@ -28,10 +35,10 @@ namespace Eggshell.Unity
 		public override void OnReady()
 		{
 			Game = Setup();
-			
-			// Initialize
-			
-			Game?.OnReady();
+
+			#if !UNITY_EDITOR
+			OnPlaying();
+			#endif
 		}
 
 		public override void OnUpdate()
@@ -41,8 +48,24 @@ namespace Eggshell.Unity
 
 		public override void OnShutdown()
 		{
+			#if !UNITY_EDITOR
+			OnExiting();
+			#endif
+		}
+
+		public void OnPlaying()
+		{
+			(Game ??= Setup()).OnReady();
+
+			Terminal.Log.Info( "Playing" );
+		}
+
+		public void OnExiting()
+		{
 			Game?.OnShutdown();
 			Game = null;
+
+			Terminal.Log.Info( "Exiting" );
 		}
 
 		private Game Setup()

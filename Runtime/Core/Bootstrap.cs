@@ -2,110 +2,87 @@
 
 using System;
 using System.Collections.Generic;
-using Eggshell.Debugging.Logging;
+using Eggshell.Diagnostics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.LowLevel;
 using UnityEngine.PlayerLoop;
-using ILogger = Eggshell.Debugging.Logging.ILogger;
 
-namespace Eggshell.Unity
+namespace Eggshell.Unity.Internal
 {
-	public class Unity : Bootstrap
+	internal class UnityEditor : UnityStandalone
 	{
-		static Unity()
+		#if UNITY_EDITOR
+
+		protected override void OnStart()
 		{
-			Terminal.Log = new Logger();
+			EditorApplication.quitting += Shutdown;
+			EditorApplication.playModeStateChanged += OnPlaymode;
+
+			Hook();
 		}
 
-		// Logger for Unity
-
-		private class Logger : ILogger
+		protected override void OnShutdown()
 		{
-			public IReadOnlyCollection<Entry> All => _logs;
-			private readonly List<Entry> _logs = new();
-
-			public Logger()
+			foreach ( var module in Module.All )
 			{
-				Application.logMessageReceived += Collected;
+				module.OnShutdown();
 			}
 
-			~Logger()
+			EditorApplication.quitting -= Shutdown;
+			EditorApplication.playModeStateChanged -= OnPlaymode;
+
+			Unhook();
+		}
+
+		private void OnPlaymode( PlayModeStateChange state )
+		{
+			Terminal.Editor = !EditorApplication.isPlaying;
+
+			switch ( state )
 			{
-				Application.logMessageReceived -= Collected;
+				// Engine - Game Specific Callbacks, Could be dispatched?
+				case PlayModeStateChange.EnteredPlayMode :
+					Module.Get<Engine>().OnPlaying();
+					break;
+				case PlayModeStateChange.ExitingPlayMode :
+					Module.Get<Engine>().OnExiting();
+					break;
 			}
+		}
 
-			private void Collected( string condition, string stacktrace, LogType type )
-			{
-				if ( Application.isEditor )
-				{
-					return;
-				}
-				
-				switch ( type )
-				{
-					case LogType.Log :
-						Terminal.Log.Info( condition, stacktrace );
-						break;
-					case LogType.Warning :
-						Terminal.Log.Warning( condition, stacktrace );
-						break;
-					case LogType.Assert :
-					case LogType.Error :
-					case LogType.Exception :
-						Terminal.Log.Error( condition, stacktrace );
-						break;
-					default :
-						throw new ArgumentOutOfRangeException( nameof( type ), type, null );
-				}
-			}
+		#endif
+	}
 
-			public void Add( Entry entry )
-			{
-				entry.Time = DateTime.Now;
-				entry.Message = entry.Message.IsEmpty( "n/a" );
-
-				_logs.Add( entry );
-
-				if ( Application.isEditor )
-				{
-					Report( entry );
-				}
-			}
-
-			public void Report( Entry entry )
-			{
-				// Report back into the editor, for proper logging in editor
-
-
-				if ( entry.Level.Contains( "Warn" ) )
-				{
-					Debug.LogWarning( entry.Message );
-					return;
-				}
-
-				if ( entry.Level.Contains( "Error" ) || entry.Level.Contains( "Exception" ) )
-				{
-					Debug.LogError( entry.Message );
-					return;
-				}
-
-				Debug.Log( entry.Message );
-			}
-
-			public void Clear()
-			{
-				_logs.Clear();
-			}
+	internal class UnityStandalone : Bootstrap
+	{
+		static UnityStandalone()
+		{
+			Terminal.Editor = Application.isEditor;
+			Terminal.Log = new UnityLogger();
 		}
 
 		// Bootstrap for Unity
 
 		protected override void OnStart()
 		{
-			// Add loop and Shutdown
-
 			Application.quitting += Shutdown;
+			Hook();
+		}
 
+		protected override void OnShutdown()
+		{
+			foreach ( var module in Module.All )
+			{
+				module.OnShutdown();
+			}
+
+			Application.quitting -= Shutdown;
+			Unhook();
+		}
+
+		protected void Hook()
+		{
 			var loop = PlayerLoop.GetCurrentPlayerLoop();
 
 			for ( var i = 0; i < loop.subSystemList.Length; ++i )
@@ -120,14 +97,8 @@ namespace Eggshell.Unity
 			PlayerLoop.SetPlayerLoop( loop );
 		}
 
-		protected override void OnShutdown()
+		protected void Unhook()
 		{
-			// Remove loop and Shutdown
-
-			base.OnShutdown();
-
-			Application.quitting -= Shutdown;
-
 			var loop = PlayerLoop.GetCurrentPlayerLoop();
 
 			for ( var i = 0; i < loop.subSystemList.Length; ++i )
@@ -139,6 +110,84 @@ namespace Eggshell.Unity
 			}
 
 			PlayerLoop.SetPlayerLoop( loop );
+		}
+	}
+
+	internal class UnityLogger : Diagnostics.ILogger
+	{
+		public IReadOnlyCollection<Entry> All => _logs;
+		private readonly List<Entry> _logs = new();
+
+		public UnityLogger()
+		{
+			Application.logMessageReceived += Collected;
+		}
+
+		~UnityLogger()
+		{
+			Application.logMessageReceived -= Collected;
+		}
+
+		private void Collected( string condition, string stacktrace, LogType type )
+		{
+			if ( Application.isEditor )
+			{
+				return;
+			}
+
+			switch ( type )
+			{
+				case LogType.Log :
+					Terminal.Log.Info( condition, stacktrace );
+					break;
+				case LogType.Warning :
+					Terminal.Log.Warning( condition, stacktrace );
+					break;
+				case LogType.Assert :
+				case LogType.Error :
+				case LogType.Exception :
+					Terminal.Log.Error( condition, stacktrace );
+					break;
+				default :
+					throw new ArgumentOutOfRangeException( nameof( type ), type, null );
+			}
+		}
+
+		public void Add( Entry entry )
+		{
+			entry.Time = DateTime.Now;
+			entry.Message = entry.Message.IsEmpty( "n/a" );
+
+			_logs.Add( entry );
+
+			if ( Application.isEditor )
+			{
+				Report( entry );
+			}
+		}
+
+		public void Report( Entry entry )
+		{
+			// Report back into the editor, for proper logging in editor
+
+			if ( entry.Level.Contains( "Warn" ) )
+			{
+				Debug.LogWarning( entry.Message );
+				return;
+			}
+
+			if ( entry.Level.Contains( "Error" ) || entry.Level.Contains( "Exception" ) )
+			{
+				Debug.LogError( entry.Message );
+				return;
+			}
+
+			Debug.Log( entry.Message );
+		}
+
+		public void Clear()
+		{
+			_logs.Clear();
 		}
 	}
 }

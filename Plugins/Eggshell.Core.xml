@@ -4,12 +4,6 @@
         <name>Eggshell.Core</name>
     </assembly>
     <members>
-        <member name="T:Eggshell.Assert">
-            <summary>
-            This class is a helper class for throwing exceptions
-            when an operation is invalid.
-            </summary>
-        </member>
         <member name="T:Eggshell.Bootstrap">
             <summary>
             Bootstrap is responsible for initializing all eggshell modules for your
@@ -83,105 +77,6 @@
             Converts a string to an object. Based off the
             inputted type. This uses reflection, and is pretty slow..
             Be careful where you put this method.
-            </summary>
-        </member>
-        <member name="T:Eggshell.IDatabase`1">
-            <summary>Generic Database, Useful for Extension Methods</summary>
-            <typeparam name="T"> Value </typeparam>
-        </member>
-        <member name="T:Eggshell.IDatabase`2">
-            <summary>Generic Database, Useful for Extension Methods</summary>
-            <typeparam name="TValue"> Value </typeparam>
-            <typeparam name="TKey">Accessor Key</typeparam>
-        </member>
-        <member name="T:Eggshell.IDatabase`3">
-            <summary>Generic Database, Useful for Extension Methods</summary>
-            <typeparam name="TValue"> Value </typeparam>
-            <typeparam name="TKey1">Accessor Key</typeparam>
-            <typeparam name="TKey2">Accessor Key</typeparam>
-        </member>
-        <member name="T:Eggshell.IDatabase`4">
-            <summary>Generic Database, Useful for Extension Methods</summary>
-            <typeparam name="TValue"> Value </typeparam>
-            <typeparam name="TKey1">Accessor Key</typeparam>
-            <typeparam name="TKey2">Accessor Key</typeparam>
-            <typeparam name="TKey3">Accessor Key</typeparam>
-        </member>
-        <member name="T:Eggshell.Dispatch">
-            <summary>
-            Fire and forget message dispatching. Primarily used for invoking
-            methods from a string (string based events) can be used across
-            languages. (C# - C++, vice versa)
-            </summary>
-        </member>
-        <member name="P:Eggshell.Dispatch.Provider">
-            <summary>
-            The underlying system that controls the dispatcher. Override
-            this to add your own dispatching logic.
-            </summary>
-        </member>
-        <member name="M:Eggshell.Dispatch.Run(System.String)">
-            <summary>
-            Runs a fire and forget dispatch. Incredibly useful for global
-            events, where you don't need to create boiler plate code to setup 
-            </summary>
-        </member>
-        <member name="M:Eggshell.Dispatch.Run(System.String,System.Object[])">
-            <summary>
-            Runs a dispatch with an array of args. Use this with caution
-            as it creates an array with the args.
-            </summary>
-        </member>
-        <member name="M:Eggshell.Dispatch.Register``1(``0)">
-            <summary>
-            Registers an instanced ILibrary to receive dispatch events.
-            (Make sure to unregister the object when finished, or else
-            it wont be collected by the GC)
-            </summary>
-        </member>
-        <member name="M:Eggshell.Dispatch.Unregister``1(``0)">
-            <summary>
-            Unregisters an instanced ILibrary from the dispatch system.
-            (Make sure to call this after you're finished with a registered
-            object, or else the GC wont collect it)
-            </summary>
-        </member>
-        <member name="T:Eggshell.Dispatching.IDispatcher">
-            <summary>
-            IDispatcher is responsible for providing a binder / logic
-            provider to the Dispatcher itself. This allows you to override
-            how the dispatcher works.
-            </summary>
-        </member>
-        <member name="M:Eggshell.Dispatching.IDispatcher.Add(System.String,Eggshell.Reflection.Function)">
-            <summary>
-            Add this function to the event stack using this string as
-            the id it should be invoked from
-            </summary>
-        </member>
-        <member name="M:Eggshell.Dispatching.IDispatcher.Run(System.String)">
-            <summary>
-            Send out a dispatch by its string id / name without any
-            parameters.
-            </summary>
-        </member>
-        <member name="M:Eggshell.Dispatching.IDispatcher.Run(System.String,System.Object[])">
-            <summary>
-            Send out a dispatch by its string id / name with an array
-            of parameters.
-            </summary>
-        </member>
-        <member name="M:Eggshell.Dispatching.IDispatcher.Register(Eggshell.ILibrary)">
-            <summary>
-            Register this object to receive instance based dispatch
-            messages from the dispatcher.
-            </summary>
-        </member>
-        <member name="M:Eggshell.Dispatching.IDispatcher.Unregister(Eggshell.ILibrary)">
-            <summary>
-            Unregister this object to no longer receive dispatch messages,
-            make sure to call this when destroying an object, or else GC
-            wont clean it up as it still has references
             </summary>
         </member>
         <member name="T:Eggshell.Archive">
@@ -453,30 +348,100 @@
             Just gives us the raw data from a file at a path
             </summary>
         </member>
-        <member name="T:Eggshell.ILibrary">
+        <member name="T:Eggshell.IObject">
             <summary>
             Stores class information, used for networking, meta data, etc.
             Which can be accessed in the Library.Database
             </summary>
         </member>
-        <member name="P:Eggshell.ILibrary.ClassInfo">
+        <member name="P:Eggshell.IObject.ClassInfo">
             <summary>
             ClassInfo holds this classes meta data, that is stored in the Library Cache.
             Library stores all Meta Data relating to this current class,
             such as Functions, Properties, Groups, Components, etc.
             </summary>
         </member>
-        <member name="M:Eggshell.ILibrary.Delete">
+        <member name="M:Eggshell.IObject.Delete">
             <summary>
             Deletes this object from the library registry. Override this to call
-            additional logic when deleting an ILibrary object.
+            additional logic when deleting an IObject object.
             </summary>
         </member>
-        <member name="T:Eggshell.Networking.Messages">
+        <member name="T:Eggshell.Dispatch">
             <summary>
-            Messages is responsible for sending messages between eggshell applications
-            We can use this for invoking commands in the console from the editor process. 
-            (Launch maps in game from editor)
+            Fire and forget message dispatching. Primarily used for invoking
+            methods from a string (string based events) can be used across
+            languages. (C# - C++, vice versa)
+            </summary>
+        </member>
+        <member name="P:Eggshell.Dispatch.Provider">
+            <summary>
+            The underlying system that controls the dispatcher. Override
+            this to add your own dispatching logic.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Dispatch.Run(System.String)">
+            <summary>
+            Runs a fire and forget dispatch. Incredibly useful for global
+            events, where you don't need to create boiler plate code to setup 
+            </summary>
+        </member>
+        <member name="M:Eggshell.Dispatch.Run(System.String,System.Object[])">
+            <summary>
+            Runs a dispatch with an array of args. Use this with caution
+            as it creates an array with the args.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Dispatch.Register``1(``0)">
+            <summary>
+            Registers an instanced IObject to receive dispatch events.
+            (Make sure to unregister the object when finished, or else
+            it wont be collected by the GC)
+            </summary>
+        </member>
+        <member name="M:Eggshell.Dispatch.Unregister``1(``0)">
+            <summary>
+            Unregisters an instanced IObject from the dispatch system.
+            (Make sure to call this after you're finished with a registered
+            object, or else the GC wont collect it)
+            </summary>
+        </member>
+        <member name="T:Eggshell.Dispatching.IDispatcher">
+            <summary>
+            IDispatcher is responsible for providing a binder / logic
+            provider to the Dispatcher itself. This allows you to override
+            how the dispatcher works.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Dispatching.IDispatcher.Add(System.String,Eggshell.Reflection.Function)">
+            <summary>
+            Add this function to the event stack using this string as
+            the id it should be invoked from
+            </summary>
+        </member>
+        <member name="M:Eggshell.Dispatching.IDispatcher.Run(System.String)">
+            <summary>
+            Send out a dispatch by its string id / name without any
+            parameters.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Dispatching.IDispatcher.Run(System.String,System.Object[])">
+            <summary>
+            Send out a dispatch by its string id / name with an array
+            of parameters.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Dispatching.IDispatcher.Register(Eggshell.IObject)">
+            <summary>
+            Register this object to receive instance based dispatch
+            messages from the dispatcher.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Dispatching.IDispatcher.Unregister(Eggshell.IObject)">
+            <summary>
+            Unregister this object to no longer receive dispatch messages,
+            make sure to call this when destroying an object, or else GC
+            wont clean it up as it still has references
             </summary>
         </member>
         <member name="T:Eggshell.IModule">
@@ -539,6 +504,18 @@
             call Crack in your programs entry point.
             </summary>
         </member>
+        <member name="P:Eggshell.Project.Booted">
+            <summary>
+            Has Eggshell already been booted up and initialized?
+            </summary>
+        </member>
+        <member name="P:Eggshell.Project.Bootstrap">
+            <summary>
+            The currently active bootstrap, that was cached from the
+            crack methods. Bootstraps are used for low level control of
+            eggshell.
+            </summary>
+        </member>
         <member name="M:Eggshell.Project.Crack">
             <summary>
             Uses Eggshells reflection system to find a
@@ -552,22 +529,16 @@
             source generators, through reflection
             </summary>
         </member>
-        <member name="T:Eggshell.ConstructorAttribute">
-            <summary>
-            Attribute that allows the definition of a custom constructor.
-            Must return an ILibrary and Must have one parameter that takes in a Library.
-            </summary>
-        </member>
-        <member name="T:Eggshell.GroupAttribute">
-            <summary>
-            Reflection Component for storing what group does this class belong too.
-            Will override the Library.Group value.
-            </summary>
-        </member>
         <member name="T:Eggshell.Reflection.OverrideAttribute">
             <summary>
             Overrides something in the source generator, it depends on the generator
             and the process its in. Will not work on most generators
+            </summary>
+        </member>
+        <member name="T:Eggshell.Reflection.SkipAttribute">
+            <summary>
+            Skips a process in a source generator. Depends on the
+            current processor and whats its doing.
             </summary>
         </member>
         <member name="T:Eggshell.Reflection.IBinding">
@@ -577,13 +548,13 @@
             data for use in your project. (Such as the Archive Component)
             </summary>
         </member>
-        <member name="M:Eggshell.Reflection.IBinding.OnRegister(Eggshell.ILibrary)">
+        <member name="M:Eggshell.Reflection.IBinding.OnRegister(Eggshell.IObject)">
             <summary>
             Should we register this object to the library registry? If
             false, it'll destroy itself. If true we should be using this object 
             </summary>
         </member>
-        <member name="M:Eggshell.Reflection.IBinding.OnUnregister(Eggshell.ILibrary)">
+        <member name="M:Eggshell.Reflection.IBinding.OnUnregister(Eggshell.IObject)">
             <summary>
             Cleanup any resources when this object gets removed from
             the registry (when it is deleted).
@@ -623,7 +594,7 @@
         </member>
         <member name="P:Eggshell.Reflection.Function.ClassInfo">
             <summary>
-            Function's ILibrary implementation for Library. as ironic
+            Function's IObject implementation for Library. as ironic
             as that sounds. Its used for getting meta about the Property
             </summary>
         </member>
@@ -647,7 +618,7 @@
         </member>
         <member name="P:Eggshell.Reflection.Function.Id">
             <summary>
-            The deterministic id created from <see cref="P:Eggshell.Reflection.Property.Name"/>,
+            The deterministic id created from <see cref="P:Eggshell.Reflection.Property`1.Name"/>,
             which is used in a Binary Tree / Sorted List to get functions
             by name.
             </summary>
@@ -683,22 +654,22 @@
             value from the parameter.
             </summary>
         </member>
-        <member name="M:Eggshell.Reflection.Function.Invoke(Eggshell.ILibrary)">
+        <member name="M:Eggshell.Reflection.Function.Invoke(Eggshell.IObject)">
             <summary>
             Invokes this function
             </summary>
         </member>
-        <member name="M:Eggshell.Reflection.Function.Invoke``1(Eggshell.ILibrary)">
+        <member name="M:Eggshell.Reflection.Function.Invoke``1(Eggshell.IObject)">
             <summary>
             Invokes this function with a return type of T
             </summary>
         </member>
-        <member name="M:Eggshell.Reflection.Function.Invoke(Eggshell.ILibrary,System.Object[])">
+        <member name="M:Eggshell.Reflection.Function.Invoke(Eggshell.IObject,System.Object[])">
             <summary>
             Invokes this function with an array of parameters
             </summary>
         </member>
-        <member name="M:Eggshell.Reflection.Function.Invoke``1(Eggshell.ILibrary,System.Object[])">
+        <member name="M:Eggshell.Reflection.Function.Invoke``1(Eggshell.IObject,System.Object[])">
             <summary>
             Invokes this function with an array of parameters and returns the
             type of T
@@ -714,103 +685,142 @@
             Finds a member by its name
             </summary>
         </member>
-        <member name="T:Eggshell.Reflection.Property">
+        <member name="T:Eggshell.Reflection.IProperty">
+            <summary>
+            An interface that supplies a generic less property
+            for interacting with, if you don't know the type.
+            </summary>
+        </member>
+        <member name="T:Eggshell.Reflection.Property`1">
             <summary>
             Properties are used in libraries for defining variables
             that can be inspected and changed. Every property has its
-            own class generated for it. So it can be ultra optimised
+            own class generated for it. So it can be ultra optimised.
+            You can also create dynamic properties that can be edited
+            at runtime, which is incredibly useful in a handful
+            of scenarios.
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property.Info">
+        <member name="P:Eggshell.Reflection.Property`1.Info">
             <summary> 
             The PropertyInfo that this property was generated for. 
             This calls GetProperty, if it hasn't already.
             </summary>
         </member>
-        <member name="F:Eggshell.Reflection.Property._info">
+        <member name="F:Eggshell.Reflection.Property`1._info">
             <summary>
             The cached property info that is generated from
-            <see cref="P:Eggshell.Reflection.Property.Info"/>.
+            <see cref="P:Eggshell.Reflection.Property`1.Info"/>.
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property.Parent">
+        <member name="P:Eggshell.Reflection.Property`1.Parent">
             <summary>
             Where did this property come from? (This will automatically
             pull properties and methods from this Library) - (Data is filled
             out by source generators)
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property.ClassInfo">
+        <member name="P:Eggshell.Reflection.Property`1.ClassInfo">
             <summary>
-            Property's ILibrary implementation for Library. as ironic
+            Property's IObject implementation for Library. as ironic
             as that sounds. Its used for getting meta about the Property
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property.Components">
+        <member name="P:Eggshell.Reflection.Property`1.Components">
             <summary>
             Components that have been attached to this property. Allows
             for easy storage of meta data, as well as property specific logic.
             </summary>
         </member>
-        <member name="M:Eggshell.Reflection.Property.#ctor(System.String,System.String)">
+        <member name="M:Eggshell.Reflection.Property`1.#ctor(System.String,System.String)">
             <summary>
             It isn't recommended that you create a property manually, as
             this is usually done through source generators.
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property.Item(System.Object)">
+        <member name="P:Eggshell.Reflection.Property`1.Item(System.Object)">
             <summary>
             Tells the target instance to change the properties value
             by the input of "from".
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property.Origin">
+        <member name="P:Eggshell.Reflection.Property`1.Value">
+            <summary>
+            A helper for setting and getting static variables to a value.
+            Behind the scenes (if not overriden) will just get the indexer
+            by null, and return the value based off of that.
+            </summary>
+        </member>
+        <member name="P:Eggshell.Reflection.Property`1.Origin">
             <summary>
             The name of the property member that this eggshell property
             was generated from. Used when getting the property itself. 
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property.Name">
+        <member name="P:Eggshell.Reflection.Property`1.Name">
             <summary>
             The programmer friendly name of this property, that is used
             to generate a deterministic hash for the ID.
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property.Id">
+        <member name="P:Eggshell.Reflection.Property`1.Id">
             <summary>
-            The deterministic id created from <see cref="P:Eggshell.Reflection.Property.Name"/>,
+            The deterministic id created from <see cref="P:Eggshell.Reflection.Property`1.Name"/>,
             which is used in a Binary Tree / Sorted List to get properties
             by name.
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property.Title">
+        <member name="P:Eggshell.Reflection.Property`1.Title">
             <summary>
             The nice looking name for this Property. Used in UI as well as
             response from the user because they don't like looking at weird names
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property.Help">
+        <member name="P:Eggshell.Reflection.Property`1.Help">
             <summary>
             The help message that tells users about this property. This is usually
             generated from the XML documentation above a property.
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property.Group">
+        <member name="P:Eggshell.Reflection.Property`1.Group">
             <summary>
             The group that this property belongs to. This is used for getting
             all property by group, as well as other functionality depending
             on the class that this property is from.
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property.IsStatic">
+        <member name="P:Eggshell.Reflection.Property`1.IsStatic">
             <summary>
             Does this property require an instance accessor to be changed?
             Used in the value setter.
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property.Type">
+        <member name="P:Eggshell.Reflection.Property`1.Type">
             <summary>
             The backing type that this property is using.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Reflection.Property`1.op_Implicit(Eggshell.Reflection.Property{`0})~`0">
+            <summary>
+            A nice to have implicit operator to the target type, so if we're
+            dealing with static properties, it's super easy to get them.
+            </summary>
+        </member>
+        <member name="T:Eggshell.ConstructorAttribute">
+            <summary>
+            Attribute that allows the definition of a custom constructor.
+            Must return an IObject and Must have one parameter that takes in a Library.
+            </summary>
+        </member>
+        <member name="T:Eggshell.GroupAttribute">
+            <summary>
+            Reflection Component for storing what group does this class belong too.
+            Will override the Library.Group value.
+            </summary>
+        </member>
+        <member name="T:Eggshell.HelpAttribute">
+            <summary>
+            Reflection Component that changes the Tile value on a Library or Property.
             </summary>
         </member>
         <member name="T:Eggshell.TitleAttribute">
@@ -834,6 +844,18 @@
             <summary>
             What icon file should we load from disk. If ID is set, it will
             prioritise that over the path.
+            </summary>
+        </member>
+        <member name="T:Eggshell.Injectable">
+            <summary>
+            Allows a member to have injected components into it. Basically
+            builds the source tree to allow custom logic to be injected
+            </summary>
+        </member>
+        <member name="T:Eggshell.Order">
+            <summary>
+            Allows a member to have injected components into it. Basically
+            builds the source tree to allow custom logic to be injected
             </summary>
         </member>
         <member name="T:Eggshell.LibraryAttribute">
@@ -930,7 +952,7 @@
         </member>
         <member name="P:Eggshell.Library.ClassInfo">
             <summary>
-            Library's ILibrary implementation for Library. as ironic
+            Library's IObject implementation for Library. as ironic
             as that sounds. Its used for getting meta about Library
             </summary>
         </member>
@@ -968,7 +990,7 @@
         </member>
         <member name="M:Eggshell.Library.Create">
             <summary>
-            Creates an ILibrary, this just does some sanity checking before
+            Creates an IObject, this just does some sanity checking before
             calling the internal Construct() method, which can be overridden
             or uses a constructor attribute.
             </summary>
@@ -982,19 +1004,19 @@
         </member>
         <member name="M:Eggshell.Library.Construct">
             <summary>
-            Constructs this ILibrary, can be overriden to provide custom logic.
+            Constructs this IObject, can be overriden to provide custom logic.
             such as using a custom constructor, or setting off events when
             this library has been constructed. Use wisely!
             </summary>
         </member>
-        <member name="M:Eggshell.Library.OnRegister(Eggshell.ILibrary)">
+        <member name="M:Eggshell.Library.OnRegister(Eggshell.IObject)">
             <summary>
             A Callback for when an object is created and registered
             to this library. Incredibly useful for setting up instanced
             based callbacks, as well as keeping track of instances.
             </summary>
         </member>
-        <member name="M:Eggshell.Library.OnUnregister(Eggshell.ILibrary)">
+        <member name="M:Eggshell.Library.OnUnregister(Eggshell.IObject)">
             <summary>
             A Callback for when an object is trying to be unregistered
             to this library. Incredibly useful for setting up instanced
@@ -1041,16 +1063,16 @@
             Use extension methods to add functionality to database access.
             </summary>
         </member>
-        <member name="M:Eggshell.Library.Register(Eggshell.ILibrary)">
+        <member name="M:Eggshell.Library.Register(Eggshell.IObject)">
             <summary>
             Registers the target object with the Library.
             Which allows it to receive instance callbacks and
             returns its library instance.
             </summary>
         </member>
-        <member name="M:Eggshell.Library.Unregister(Eggshell.ILibrary)">
+        <member name="M:Eggshell.Library.Unregister(Eggshell.IObject)">
             <summary>
-            Cleans up ILibrary object, removes it from instance
+            Cleans up IObject object, removes it from instance
             callback database so the garbage collector picks it up.
             </summary>
         </member>
@@ -1064,31 +1086,31 @@
             inside libraries, instanced or not.
             </summary>
         </member>
-        <member name="M:Eggshell.LoggerExtensions.Entry``1(Eggshell.Debugging.Logging.ILogger,``0,System.String,System.String)">
+        <member name="M:Eggshell.LoggerExtensions.Entry``1(Eggshell.Diagnostics.ILogger,``0,System.String,System.String)">
             <summary>
             Adds a custom entry to the log output, Useful for debug callbacks to the steamworks api
             or any custom framework that has its own logger, and you need to add a custom label to it.
             </summary>
         </member>
-        <member name="M:Eggshell.LoggerExtensions.Info``1(Eggshell.Debugging.Logging.ILogger,``0,System.String)">
+        <member name="M:Eggshell.LoggerExtensions.Info``1(Eggshell.Diagnostics.ILogger,``0,System.String)">
             <summary>
             Adds a verbose info log to the log output. These are automatically stripped from your
             application if you're not doing a debug build.
             </summary>
         </member>
-        <member name="M:Eggshell.LoggerExtensions.Warning``1(Eggshell.Debugging.Logging.ILogger,``0,System.String)">
+        <member name="M:Eggshell.LoggerExtensions.Warning``1(Eggshell.Diagnostics.ILogger,``0,System.String)">
             <summary>
             Adds a warning log to the log output. These are automatically stripped from your
             application if you're not doing a debug build. (Might change in the future)
             </summary>
         </member>
-        <member name="M:Eggshell.LoggerExtensions.Error``1(Eggshell.Debugging.Logging.ILogger,``0,System.String)">
+        <member name="M:Eggshell.LoggerExtensions.Error``1(Eggshell.Diagnostics.ILogger,``0,System.String)">
             <summary>
             Adds an error log to the log output. These won't be stripped from your application
             depending on the build type.
             </summary>
         </member>
-        <member name="M:Eggshell.LoggerExtensions.Exception(Eggshell.Debugging.Logging.ILogger,System.Exception)">
+        <member name="M:Eggshell.LoggerExtensions.Exception(Eggshell.Diagnostics.ILogger,System.Exception)">
             <summary>
             Adds an exception log to the log output. These won't be stripped from your application
             depending on the build type.
@@ -1109,7 +1131,14 @@
         <member name="P:Eggshell.Terminal.Log">
             <summary>
             Add your own extension methods if need be, since this is an
-            instanced class. 
+            instanced class. Usually controlled by the bootstrap
+            </summary>
+        </member>
+        <member name="P:Eggshell.Terminal.Overlays">
+            <summary>
+            Overlays are things rendered over everything that represent
+            debug information. This is usually null and depends on what the
+            bootstrap does to initialize it.
             </summary>
         </member>
         <member name="P:Eggshell.Terminal.Developer">
@@ -1118,10 +1147,29 @@
             meaning there was a launch arg of -dev.
             </summary>
         </member>
+        <member name="P:Eggshell.Terminal.Editor">
+            <summary>
+            Returns true if the instance was launched in some sort of editor
+            that can be used to edit assets and compile them. Set by the bootstrap
+            (Such as launching Eggshell in the Unity Editor)
+            </summary>
+        </member>
+        <member name="P:Eggshell.Terminal.Report">
+            <summary>
+            Should we report the stopwatch logs, or any other terminal
+            specific things.
+            </summary>
+        </member>
         <member name="M:Eggshell.Terminal.Stopwatch(System.String,System.Boolean)">
             <summary>
             Runs a stopwatch on a IDisposable Scope. Use this in a using() expression
             to record how long it took to execute that code block.
+            </summary>
+        </member>
+        <member name="T:Eggshell.Assert">
+            <summary>
+            This class is a helper class for throwing exceptions
+            when an operation is invalid.
             </summary>
         </member>
         <member name="T:Eggshell.EMath">
