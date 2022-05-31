@@ -30,6 +30,10 @@ namespace Eggshell.Unity
 		/// </summary>
 		public static Game Game { get; private set; }
 
+		// Debug
+
+		private const string Level = "<color=yellow>Engine</color>";
+
 		// Logic
 
 		public override void OnReady()
@@ -56,16 +60,12 @@ namespace Eggshell.Unity
 		public void OnPlaying()
 		{
 			(Game ??= Setup()).OnReady();
-
-			Terminal.Log.Info( "Playing" );
 		}
 
 		public void OnExiting()
 		{
 			Game?.OnShutdown();
 			Game = null;
-
-			Terminal.Log.Info( "Exiting" );
 		}
 
 		private Game Setup()
@@ -78,7 +78,7 @@ namespace Eggshell.Unity
 				return null;
 			}
 
-			Terminal.Log.Info( $"Setting up {game.ClassInfo.Title} as the Game" );
+			Terminal.Log.Entry( $"Setting up {game.ClassInfo.Title} as the Game", Level );
 			return game;
 		}
 	}

@@ -10,9 +10,19 @@ using UnityEngine.PlayerLoop;
 
 namespace Eggshell.Unity.Internal
 {
+	/// <summary>
+	/// Bootstrap for when you are using the UnityEditor, this will only
+	/// compile (the body of the class) when you are in the editor.
+	/// </summary>
 	internal class UnityEditor : UnityStandalone
 	{
 		#if UNITY_EDITOR
+
+		static UnityEditor()
+		{
+			Terminal.Editor = Application.isEditor;
+			Terminal.Log = new UnityLogger();
+		}
 
 		protected override void OnStart()
 		{
@@ -54,14 +64,12 @@ namespace Eggshell.Unity.Internal
 		#endif
 	}
 
+	/// <summary>
+	/// A bootstrap for when you are in a standalone unity game process.
+	/// This isn't the bootstrap that is used while in the editor.
+	/// </summary>
 	internal class UnityStandalone : Bootstrap
 	{
-		static UnityStandalone()
-		{
-			Terminal.Editor = Application.isEditor;
-			Terminal.Log = new UnityLogger();
-		}
-
 		// Bootstrap for Unity
 
 		protected override void OnStart()
@@ -118,52 +126,13 @@ namespace Eggshell.Unity.Internal
 		public IReadOnlyCollection<Entry> All => _logs;
 		private readonly List<Entry> _logs = new();
 
-		public UnityLogger()
-		{
-			Application.logMessageReceived += Collected;
-		}
-
-		~UnityLogger()
-		{
-			Application.logMessageReceived -= Collected;
-		}
-
-		private void Collected( string condition, string stacktrace, LogType type )
-		{
-			if ( Application.isEditor )
-			{
-				return;
-			}
-
-			switch ( type )
-			{
-				case LogType.Log :
-					Terminal.Log.Info( condition, stacktrace );
-					break;
-				case LogType.Warning :
-					Terminal.Log.Warning( condition, stacktrace );
-					break;
-				case LogType.Assert :
-				case LogType.Error :
-				case LogType.Exception :
-					Terminal.Log.Error( condition, stacktrace );
-					break;
-				default :
-					throw new ArgumentOutOfRangeException( nameof( type ), type, null );
-			}
-		}
-
 		public void Add( Entry entry )
 		{
 			entry.Time = DateTime.Now;
 			entry.Message = entry.Message.IsEmpty( "n/a" );
 
 			_logs.Add( entry );
-
-			if ( Application.isEditor )
-			{
-				Report( entry );
-			}
+			Report( entry );
 		}
 
 		public void Report( Entry entry )
@@ -180,6 +149,11 @@ namespace Eggshell.Unity.Internal
 			{
 				Debug.LogError( entry.Message );
 				return;
+			}
+
+			if ( !entry.Level.Contains( "Info" ) )
+			{
+				entry.Message = $"[{entry.Level}] {entry.Message}";
 			}
 
 			Debug.Log( entry.Message );
