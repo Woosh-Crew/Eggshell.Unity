@@ -367,6 +367,27 @@
             additional logic when deleting an IObject object.
             </summary>
         </member>
+        <member name="T:Eggshell.Coroutine">
+            <summary>
+            Coroutines are methods that can be held / waited / yielded
+            half way through it, and can sequentially perform actions over a
+            period of time, while being in the same callstack.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Coroutine.Start(System.Collections.IEnumerator)">
+            <summary>
+            Adds a new coroutine to the coroutine stack. A coroutine function must
+            return IEnumerator (I know its weird) in order for it to work properly
+            </summary>
+            <param name="enumerator"></param>
+        </member>
+        <member name="M:Eggshell.Coroutine.Remove(System.Collections.IEnumerator)">
+            <summary>
+            Removes a running coroutine from the coroutine stack (If you saved a
+            reference to it!) Make sure to not call this while in a coroutine, as
+            it might break it.
+            </summary>
+        </member>
         <member name="T:Eggshell.Dispatch">
             <summary>
             Fire and forget message dispatching. Primarily used for invoking
@@ -494,6 +515,97 @@
             Try's to create a module by its type and will add it to the registered
             list if it successes in doing so. Calls to this function will automatically
             be created by source generators, and invoked when the egg is cracked.
+            </summary>
+        </member>
+        <member name="T:Eggshell.IRoutine">
+            <summary>
+            A IRoutine is a routine that can potentially have a UI representing it (Such as loading a map,
+            connecting to a networked game, downloading an item while loading a map from the workshop).
+            </summary>
+        </member>
+        <member name="P:Eggshell.IRoutine.Progress">
+            <summary>
+            The progress from 0 to 1 on how far done this routine is.
+            </summary>load
+        </member>
+        <member name="P:Eggshell.IRoutine.Text">
+            <summary>
+            The text that should appear in the UI for when this request is loading.
+            </summary>
+        </member>
+        <member name="M:Eggshell.IRoutine.Load(System.Action)">
+            <summary>
+            Run this item through the routine. Which means it could have a UI representing
+            its current loading state.
+            </summary>
+        </member>
+        <member name="M:Eggshell.IRoutine.Inject">
+            <summary>
+            Allows the injection of instructions before this instruction happens. Useful for preloading
+            files, downloading maps, etc before actually loading the map
+            </summary>
+        </member>
+        <member name="T:Eggshell.Routines">
+            <summary>
+            Routines might sound similar to coroutine, but they are completely different.
+            Routines are a set of functions that fire based of a series of callbacks,
+            allowing us to sequentially perform actions that usually are spanned across
+            different frames, or different threads.
+            </summary>
+        </member>
+        <member name="P:Eggshell.Routines.Progress">
+            <summary>
+            The progress of the current routine being processed. In the future this will be updated
+            to be the progress of the whole routine.
+            </summary>
+        </member>
+        <member name="P:Eggshell.Routines.Text">
+            <summary>
+            The help / loading text for the current routine that is being processed. Use this in
+            your UI if you are using routines for loading maps.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Routines.Start(System.Action,Eggshell.IRoutine[])">
+            <summary>
+            Starts a new routine based on an array of requests (params) with an optional callback
+            parameter for when the routine is finished. 
+            </summary>
+        </member>
+        <member name="M:Eggshell.Routines.Start(System.Action,System.Func{Eggshell.IRoutine}[])">
+            <summary>
+            Starts a new routine based on an array of func requests (params) with an optional
+            callback parameter for when the routine is finished. 
+            </summary>
+        </member>
+        <member name="M:Eggshell.Routines.Start(Eggshell.IRoutine[])">
+            <summary>
+            Starts a new routine based on an array of requests. Nothing special other than
+            that. Its advised you use Func version where you can.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Routines.Start(System.Func{Eggshell.IRoutine}[])">
+            <summary>
+            Starts a new routine based on an array of func requests. Will invoke the func when
+            its time for it to inject.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Routines.Create(System.Action{System.Action},System.String)">
+            <summary>
+            Creates a IRoutine based on an Action that has an Action as one of its parameters 
+            (I know its weird) can be quite useful in a handful of scenarios (Such as prototyping
+            a routine) 
+            </summary>
+        </member>
+        <member name="M:Eggshell.Routines.Create(System.Threading.Tasks.Task,System.String)">
+            <summary>
+            Creates a IRoutine based on a task. The finish callback will be invoked once this task 
+            has been completed. Progress depends on the task type.
+            </summary>
+        </member>
+        <member name="P:Eggshell.Routines.Timing">
+            <summary>
+            The time it took for the last routine that was running to completely finish. This
+            is mostly used as debugging information.
             </summary>
         </member>
         <member name="T:Eggshell.Project">
@@ -1086,7 +1198,7 @@
             inside libraries, instanced or not.
             </summary>
         </member>
-        <member name="M:Eggshell.LoggerExtensions.Log``1(System.String)">
+        <member name="M:Eggshell.LoggerExtensions.Log(System.String)">
             <summary>
             Logs a generic string straight to the active eggshell terminal logger. Will automatically
             get stripped if not in debug mode. 
