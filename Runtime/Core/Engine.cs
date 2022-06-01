@@ -25,6 +25,18 @@ namespace Eggshell.Unity
 		}
 
 		// Engine
+		// --------------------------------------------------------------------------------------- //
+
+		/// <summary>
+		/// Engine classes custom log level. We use this instead of info s  it looks
+		/// nice in the console, and so they don't get stripped when building
+		/// </summary>
+		private const string Level = 
+		#if UNITY_EDITOR
+			"<color=yellow>Engine</color>";
+		#else
+			"Engine";
+		#endif
 
 		/// <summary>
 		/// The current game that is in session, this will
@@ -32,12 +44,8 @@ namespace Eggshell.Unity
 		/// </summary>
 		public static Game Game { get; private set; }
 
-		// Debug
-
-		private const string Level = "<color=yellow>Engine</color>";
-
-		// Logic
-
+		// Module Callbacks
+		
 		public override void OnReady()
 		{
 			Game = Setup();
@@ -59,6 +67,8 @@ namespace Eggshell.Unity
 			#endif
 		}
 
+		// Runtime Game
+		// --------------------------------------------------------------------------------------- //
 
 		/// <summary>
 		/// A Callback for when we have switched to play mode (in the editor)
@@ -68,7 +78,12 @@ namespace Eggshell.Unity
 		public void OnPlaying()
 		{
 			(Game ??= Setup()).OnReady();
-			
+
+			foreach ( var module in All )
+			{
+				(module as Game.Callbacks)?.OnPlaying();
+			}
+
 			Terminal.Log.Entry( "Entering the Game", Level );
 		}
 
@@ -79,8 +94,14 @@ namespace Eggshell.Unity
 		public void OnExiting()
 		{
 			Game?.OnShutdown();
+			
+			foreach ( var module in All )
+			{
+				(module as Game.Callbacks)?.OnExiting();
+			}
+			
 			Game = null;
-
+			
 			Terminal.Log.Entry( "Exiting the Game", Level );
 		}
 

@@ -9,13 +9,21 @@
 	{
 		public Library ClassInfo { get; }
 
-		public Game()
+		public Game() : this( builder : new() ) { }
+
+		public Game( Tripod.Builder builder = null )
 		{
 			ClassInfo = Library.Register( this );
 			Assert.IsNull( ClassInfo );
+
+			Components = new( this )
+			{
+				builder
+			};
 		}
 
-		// Registration
+		// Game Registration
+		// --------------------------------------------------------------------------------------- //
 
 		/// <summary>
 		/// OnReady is called by the Engine module when we are entering playmode
@@ -35,7 +43,18 @@
 		/// </summary>
 		public virtual void OnShutdown() { }
 
-		// Components
+		/// <summary>
+		/// Callbacks specifically made for modules, so they know what to do when we are
+		/// playing or exiting (editor = playmode state change, runtime = start, shutdown)
+		/// </summary>
+		public interface Callbacks
+		{
+			void OnPlaying();
+			void OnExiting();
+		}
+
+		// Dependency Injection
+		// --------------------------------------------------------------------------------------- //
 
 		/// <summary>
 		/// Dependency injection logic for the game class, some components are initialized
