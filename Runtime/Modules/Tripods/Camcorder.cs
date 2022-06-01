@@ -1,10 +1,21 @@
 ﻿using UnityEngine;
 
+#if POST_FX
+using UnityEngine.Rendering.PostProcessing;
+#endif
+
 namespace Eggshell.Unity
 {
 	public sealed class Camcorder : Module, Game.Callbacks
 	{
 		public Camera Camera { get; private set; }
+
+		#if POST_FX
+
+		public PostProcessLayer Layer { get; private set; }
+		public PostProcessDebug Debug { get; private set; }
+
+		#endif
 
 		// Runtime Game
 		// --------------------------------------------------------------------------------------- //
@@ -20,13 +31,29 @@ namespace Eggshell.Unity
 			Camera = go.AddComponent<Camera>();
 			Camera.depth = 5;
 
+			#if POST_FX
+
+			// Setup Post Processing (Builtin Postfx)
+
+			Layer = go.AddComponent<PostProcessLayer>();
+			Layer.Init( UnityEngine.Resources.Load<PostProcessResources>( "PostProcessResources" ) );
+
+			Layer.volumeTrigger = go.transform;
+			Layer.volumeLayer = LayerMask.GetMask( "TransparentFX", "Water" );
+			Layer.antialiasingMode = PostProcessLayer.Antialiasing.SubpixelMorphologicalAntialiasing;
+
+			Debug = go.AddComponent<PostProcessDebug>();
+			Debug.postProcessLayer = Layer;
+
+			#endif
+
 			GameObject.DontDestroyOnLoad( go );
 		}
 
 		public void OnExiting()
 		{
-			GameObject.Destroy( Camera );
-			
+			GameObject.Destroy( Camera.gameObject );
+
 			Camera = null;
 			Builder = null;
 		}
