@@ -1,24 +1,40 @@
-﻿namespace Eggshell.Unity
+﻿using UnityEngine;
+
+namespace Eggshell.Unity
 {
+	public class Phoenix : Game
+	{
+		private class Builder : Tripod.Builder
+		{
+			protected override void OnSetup( ref Tripod.Setup setup )
+			{
+				base.OnSetup( ref setup );
+				setup.Position += Vector3.back * Time.deltaTime * 2;
+			}
+		}
+
+		public Phoenix() : base( tripods : new Builder() ) { }
+	}
+
 	/// <summary>
 	/// The Game class is the entry point into your unity project. Override
 	/// this to provide custom logic for application wide specifics.
 	/// </summary>
-	[Singleton]
+	[Singleton, Title( "Default Game" )]
 	public class Game : IObject
 	{
 		public Library ClassInfo { get; }
 
-		public Game() : this( builder : new() ) { }
+		public Game() : this( tripods : new() ) { }
 
-		public Game( Tripod.Builder builder = null )
+		public Game( Tripod.Builder tripods = null )
 		{
 			ClassInfo = Library.Register( this );
 			Assert.IsNull( ClassInfo );
 
 			Components = new( this )
 			{
-				builder
+				tripods
 			};
 		}
 

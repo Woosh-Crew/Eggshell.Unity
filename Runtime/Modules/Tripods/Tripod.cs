@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Eggshell.Unity
 {
@@ -103,11 +104,62 @@ namespace Eggshell.Unity
 			}
 
 			protected virtual Tripod Active() { return null; }
-			protected virtual void OnSetup( ref Setup setup ) { }
+
+			protected virtual void OnSetup( ref Setup setup )
+			{
+				Effect.Apply( ref setup );
+			}
 
 			// IComponent			
 
 			public void OnAttached( Game item ) { }
+		}
+
+		// Effect
+		// --------------------------------------------------------------------------------------- //
+
+		/// <summary>
+		/// Tripod modifiers are temporary modifiers that change the Tripod setup 
+		/// after all the tripods and viewmodels have been built. This allows
+		/// you to do cool stuff like screen shake, or on land effects.
+		/// </summary>
+		public abstract class Effect
+		{
+			private static readonly List<Effect> All = new();
+
+			/// <summary>
+			/// Applies all the modifiers that are currently in the modifier
+			/// stack and removes them if we're done with it
+			/// </summary>
+			public static void Apply( ref Setup setup )
+			{
+				for ( var i = All.Count; i > 0; i-- )
+				{
+					var remove = All[i - 1].Update( ref setup );
+
+					if ( remove )
+					{
+						All.RemoveAt( i - 1 );
+					}
+				}
+			}
+
+			/// <summary>
+			/// Clears all the modifiers from the stack, no ifs or buts. Just
+			/// pisses them all off.
+			/// </summary>
+			public static void Clear()
+			{
+				All.Clear();
+			}
+
+			public Effect()
+			{
+				All.Add( this );
+			}
+
+			/// <returns> True if were done with this Modifier </returns>
+			protected abstract bool Update( ref Setup setup );
 		}
 	}
 }
