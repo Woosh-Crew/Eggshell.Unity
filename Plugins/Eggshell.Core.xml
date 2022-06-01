@@ -1086,6 +1086,12 @@
             inside libraries, instanced or not.
             </summary>
         </member>
+        <member name="M:Eggshell.LoggerExtensions.Log``1(System.String)">
+            <summary>
+            Logs a generic string straight to the active eggshell terminal logger. Will automatically
+            get stripped if not in debug mode. 
+            </summary>
+        </member>
         <member name="M:Eggshell.LoggerExtensions.Entry``1(Eggshell.Diagnostics.ILogger,``0,System.String,System.String)">
             <summary>
             Adds a custom entry to the log output, Useful for debug callbacks to the steamworks api

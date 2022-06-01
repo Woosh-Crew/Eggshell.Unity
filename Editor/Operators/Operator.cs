@@ -1,20 +1,58 @@
 using System;
+using UnityEditor;
+using UnityEngine;
 
 namespace Eggshell.Unity.Tools
 {
+	public class Search : EditorWindow
+	{
+		[MenuItem( "Eggshell/Search" )]
+		public static void Open()
+		{
+			GetWindow<Search>().Show();
+		}
+
+		private string _input = string.Empty;
+
+		private void OnGUI()
+		{
+			_input = EditorGUILayout.TextField( "Input", _input );
+
+			GUI.enabled = !string.IsNullOrEmpty( _input );
+
+			if ( GUILayout.Button( "Submit" ) )
+			{
+				Operator.Run<Action<string>>( _input, s => s.Log() );
+			}
+
+			GUI.enabled = true;
+		}
+	}
+
 	/// <summary>
 	/// This will save all open and modified scenes without asking if it
 	/// should or not.
 	/// </summary>
 	[Library( "eggshell.ops.scenes.save" ), Title( "Save Modified Scenes" )]
-	public class Save : Operator<Save.Callback>
+	public class Save : Operator
 	{
-		public delegate void Callback();
-
-		protected override void OnExecute( Callback callback )
+		protected override void OnExecute()
 		{
 			UnityEditor.SceneManagement.EditorSceneManager.SaveOpenScenes();
-			callback.Invoke();
+		}
+	}
+
+	/// <summary>
+	/// This will save all open and modified scenes without asking if it
+	/// should or not.
+	/// </summary>
+	[Library( "eggshell.ops.files.browser" ), Title( "Save Modified Scenes" )]
+	public class FileBrowser : Operator<Action<string>>
+	{
+		protected override void OnExecute( Action<string> callback )
+		{
+			var value = EditorUtility.OpenFilePanel( "File Browser", "", "" );
+			callback?.Invoke( value );
 		}
 	}
 
@@ -49,9 +87,9 @@ namespace Eggshell.Unity.Tools
 			Library.Database[name]?.Create<Operator>().Execute();
 		}
 
-		public static void Run<T>() where T : Operator
+		public static void Run<T>( string name, T callback ) where T : Delegate
 		{
-			Library.Database.Find<T>()?.Create<Operator>().Execute();
+			Library.Database[name]?.Create<Operator<T>>().Execute( callback );
 		}
 
 		public Library ClassInfo => GetType();

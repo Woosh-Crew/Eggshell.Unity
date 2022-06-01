@@ -1,10 +1,5 @@
 ﻿namespace Eggshell.Unity
 {
-	public class Phoenix : Game
-	{
-		public override void OnReady() { }
-	}
-
 	/// <summary>
 	/// The Game class is the entry point into your unity project. Override
 	/// this to provide custom logic for application wide specifics.
