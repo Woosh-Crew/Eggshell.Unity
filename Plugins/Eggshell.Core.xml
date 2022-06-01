@@ -62,23 +62,6 @@
             on all modules. 
             </summary>
         </member>
-        <member name="T:Eggshell.Converter">
-            <summary>
-            Eggshell's string to object converter.
-            </summary>
-        </member>
-        <member name="M:Eggshell.Converter.Convert``1(System.String)">
-            <summary>
-            Converts a string to the type of T. 
-            </summary>
-        </member>
-        <member name="M:Eggshell.Converter.Convert(System.String,System.Type)">
-            <summary>
-            Converts a string to an object. Based off the
-            inputted type. This uses reflection, and is pretty slow..
-            Be careful where you put this method.
-            </summary>
-        </member>
         <member name="T:Eggshell.Archive">
             <summary>
             An archive is a statically typed file. We use this in conjunction
@@ -365,6 +348,23 @@
             <summary>
             Deletes this object from the library registry. Override this to call
             additional logic when deleting an IObject object.
+            </summary>
+        </member>
+        <member name="T:Eggshell.Converter">
+            <summary>
+            Eggshell's string to object converter.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Converter.Convert``1(System.String)">
+            <summary>
+            Converts a string to the type of T. 
+            </summary>
+        </member>
+        <member name="M:Eggshell.Converter.Convert(System.String,System.Type)">
+            <summary>
+            Converts a string to an object. Based off the
+            inputted type. This uses reflection, and is pretty slow..
+            Be careful where you put this method.
             </summary>
         </member>
         <member name="T:Eggshell.Coroutine">
@@ -1282,6 +1282,21 @@
             <summary>
             Runs a stopwatch on a IDisposable Scope. Use this in a using() expression
             to record how long it took to execute that code block.
+            </summary>
+        </member>
+        <member name="T:Eggshell.Operator`1">
+            <summary>
+            An operator is a operation that is performed in the editor. Operators
+            can be searched for in the editor is well. It is also recommended you
+            use operators for tools that do actions / operations. This operator
+            can have a callback.
+            </summary>
+        </member>
+        <member name="T:Eggshell.Operator">
+            <summary>
+            An operator is a operation that is performed in the editor. Operators
+            can be searched for in the editor is well. It is also recommended you
+            use operators for tools that do actions / operations.
             </summary>
         </member>
         <member name="T:Eggshell.Assert">
