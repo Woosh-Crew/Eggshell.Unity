@@ -14,7 +14,7 @@ namespace Eggshell.Unity
 			}
 		}
 
-		public Phoenix() : base( tripods : null ) { }
+		public Phoenix() : base( tripods : new Builder() ) { }
 	}
 
 	/// <summary>

@@ -21,7 +21,7 @@ namespace Eggshell.Unity
 		/// The current sheet that is currently being sampled and processed, this happens
 		/// per client. So each client can have its own input.
 		/// </summary>
-		public static Sheet Processing { get; private set; } = new() { Mouse = { Locked = true, Visible = false } };
+		public static Sheet Processing { get; private set; }
 
 		/// <summary>
 		/// The current mouse data that has been sampled this frame. (Gets sampled
@@ -40,7 +40,7 @@ namespace Eggshell.Unity
 
 		public override void OnUpdate()
 		{
-			if ( Terminal.Editor || Processing == null )
+			if ( Terminal.Editor || Processing?.Scheme == null )
 			{
 				// Modules run in Editor, so don't do anything.
 				return;
@@ -61,11 +61,13 @@ namespace Eggshell.Unity
 		public void OnPlaying()
 		{
 			// Get Scheme from Game
+			Processing = new( new() { Locked = true, Visible = false }, null );
 		}
 
 		public void OnExiting()
 		{
 			// Revert everything, so we can quick load in Editor
+			Processing = null;
 		}
 
 		/// <summary>
@@ -73,6 +75,12 @@ namespace Eggshell.Unity
 		/// </summary>
 		public class Sheet
 		{
+			public Sheet( Mouse mouse, Scheme scheme )
+			{
+				Mouse = mouse;
+				Scheme = scheme;
+			}
+
 			/// <summary> Mouse Data, gets reset every Input Sample </summary>
 			public Mouse Mouse { get; }
 
@@ -85,7 +93,7 @@ namespace Eggshell.Unity
 			/// <summary> Clears the Input Setup </summary>
 			public void Clear()
 			{
-				Mouse.Clear();
+				Mouse?.Clear();
 
 				foreach ( var binding in Scheme )
 				{
@@ -95,7 +103,7 @@ namespace Eggshell.Unity
 
 			public void Sample()
 			{
-				Mouse.Sample();
+				Mouse?.Sample();
 
 				foreach ( var binding in Scheme )
 				{
