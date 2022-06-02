@@ -1,21 +1,7 @@
 ﻿using Eggshell.Unity.Inputs;
-using UnityEngine;
 
 namespace Eggshell.Unity
 {
-	public class Phoenix : Game
-	{
-		private class Builder : Tripod.Builder
-		{
-			protected override void OnSetup( ref Tripod.Setup setup )
-			{
-				base.OnSetup( ref setup );
-				setup.Position += Vector3.back * Time.deltaTime * 2;
-			}
-		}
-
-		public Phoenix() : base( tripods : new Builder() ) { }
-	}
 
 	/// <summary>
 	/// The Game class is the entry point into your unity project. Override
