@@ -31,12 +31,7 @@ namespace Eggshell.Unity
 		/// Engine classes custom log level. We use this instead of info s  it looks
 		/// nice in the console, and so they don't get stripped when building
 		/// </summary>
-		private const string Level = 
-		#if UNITY_EDITOR
-			"<color=yellow>Engine</color>";
-		#else
-			"Engine";
-		#endif
+		private const string Level = "Engine";
 
 		/// <summary>
 		/// The current game that is in session, this will

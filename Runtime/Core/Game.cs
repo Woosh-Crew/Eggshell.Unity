@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Eggshell.Unity.Inputs;
+using UnityEngine;
 
 namespace Eggshell.Unity
 {
@@ -13,7 +14,7 @@ namespace Eggshell.Unity
 			}
 		}
 
-		public Phoenix() : base( tripods : new Builder() ) { }
+		public Phoenix() : base( tripods : null ) { }
 	}
 
 	/// <summary>
@@ -25,16 +26,16 @@ namespace Eggshell.Unity
 	{
 		public Library ClassInfo { get; }
 
-		public Game() : this( tripods : new() ) { }
+		public Game() : this( new(), new() ) { }
 
-		public Game( Tripod.Builder tripods = null )
+		public Game( Scheme controls = null, Tripod.Builder tripods = null )
 		{
 			ClassInfo = Library.Register( this );
 			Assert.IsNull( ClassInfo );
 
 			Components = new( this )
 			{
-				tripods
+				tripods,
 			};
 		}
 

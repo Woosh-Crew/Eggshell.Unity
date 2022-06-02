@@ -171,7 +171,7 @@ namespace Eggshell.Unity.Internal
 
 			if ( !entry.Level.Contains( "Info" ) )
 			{
-				entry.Message = $"[{entry.Level}] {entry.Message}";
+				entry.Message = $"[<color=yellow>{entry.Level}</color>] {entry.Message}";
 			}
 
 			Debug.Log( entry.Message );

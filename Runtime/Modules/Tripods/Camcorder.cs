@@ -24,6 +24,12 @@ namespace Eggshell.Unity
 		{
 			Builder = Engine.Game.Components.Get<Tripod.Builder>();
 
+			if ( Builder == null )
+			{
+				// Not valid Game
+				return;
+			}
+
 			// Setup Camera
 			var go = new GameObject( "Camera" );
 			go.AddComponent<AudioListener>();
@@ -52,7 +58,14 @@ namespace Eggshell.Unity
 
 		public void OnExiting()
 		{
+			if ( Builder == null )
+			{
+				// Not valid Game
+				return;
+			}
+
 			GameObject.Destroy( Camera.gameObject );
+			Setup = Default;
 
 			Camera = null;
 			Builder = null;
@@ -63,7 +76,9 @@ namespace Eggshell.Unity
 
 		public Tripod.Builder Builder { get; private set; }
 
-		public Tripod.Setup Setup { get; private set; } = new()
+		public Tripod.Setup Setup { get; private set; } = Default;
+
+		private static Tripod.Setup Default => new()
 		{
 			FieldOfView = 68,
 			Rotation = Quaternion.identity,
@@ -72,7 +87,7 @@ namespace Eggshell.Unity
 
 		public override void OnUpdate()
 		{
-			if ( Terminal.Editor || Camera == null )
+			if ( Terminal.Editor || Camera == null || Builder == null )
 			{
 				// Modules run in Editor, so don't do anything.
 				return;
