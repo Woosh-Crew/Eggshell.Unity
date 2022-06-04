@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Eggshell.Unity.Inputs;
+﻿using Eggshell.Unity.Inputs;
 using UnityEngine;
-using Event = System.Action;
 
 namespace Eggshell.Unity
 {
@@ -34,6 +31,33 @@ namespace Eggshell.Unity
 		/// sampled every frame). Scheme is how you get binds, (axis or action)
 		/// </summary>
 		public static Scheme Scheme => Processing.Scheme;
+
+		/// <summary>
+		/// Is the inputted name, currently being pressed on the processing client?
+		/// (Gets the bind from the scheme using the id)
+		/// </summary>
+		public static bool Pressed( string name )
+		{
+			return Scheme.Get( name )?.Pressed ?? false;
+		}
+
+		/// <summary>
+		/// Is the inputted name, currently being held on the processing client?
+		/// (Gets the bind from the scheme using the id)
+		/// </summary>
+		public static bool Held( string name )
+		{
+			return Scheme.Get( name )?.Held ?? false;
+		}
+
+		/// <summary>
+		/// Is the inputted name, currently being released on the processing client?
+		/// (Gets the bind from the scheme using the id)
+		/// </summary>
+		public static bool Released( string name )
+		{
+			return Scheme.Get( name )?.Released ?? false;
+		}
 
 		// Controls
 		// --------------------------------------------------------------------------------------- //
@@ -111,175 +135,5 @@ namespace Eggshell.Unity
 				}
 			}
 		}
-	}
-}
-
-namespace Eggshell.Unity.Inputs
-{
-	public sealed class Mouse
-	{
-		// Control
-
-		public bool Visible { get; set; }
-		public bool Locked { get; set; }
-		public bool Confined { get; set; }
-
-		// Input
-
-		public Vector3 Position { get; private set; }
-		public Vector2 Delta { get; private set; }
-		public float Wheel { get; private set; }
-
-		internal void Sample()
-		{
-			Position = Input.mousePosition;
-			Delta = new( Input.GetAxis( "Mouse X" ), Input.GetAxis( "Mouse Y" ) );
-			Wheel = Input.mouseScrollDelta.y;
-		}
-
-		public void Clear()
-		{
-			Delta = Vector2.zero;
-			Wheel = 0;
-		}
-	}
-
-	public class Scheme : IEnumerable<Bind>, IObject
-	{
-		public Library ClassInfo { get; }
-
-		public Scheme()
-		{
-			ClassInfo = Library.Register( this );
-		}
-
-		~Scheme()
-		{
-			Library.Unregister( this );
-		}
-
-		private readonly SortedList<int, Bind> _binds = new();
-
-		public Bind Get( string key )
-		{
-			return _binds.TryGetValue( key.Hash(), out var value ) ? value : null;
-		}
-
-		public T Get<T>( string key ) where T : Bind
-		{
-			return (T)Get( key );
-		}
-
-		public void Add( Bind bind )
-		{
-			var key = bind.Name.Hash();
-
-			if ( _binds.ContainsKey( key ) )
-			{
-				Terminal.Log.Warning( $"Replacing Binding {key}" );
-				_binds[key] = bind;
-				return;
-			}
-
-			_binds.Add( key, bind );
-		}
-
-		// Enumerator
-
-		public IEnumerator<Bind> GetEnumerator()
-		{
-			return _binds.Values.GetEnumerator();
-		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return GetEnumerator();
-		}
-
-	}
-
-	public class Axis : Bind
-	{
-		public string Sampler { get; }
-		public bool Raw { get; }
-
-		public Axis( string name, string axis, bool raw = true ) : base( name )
-		{
-			Sampler = axis;
-			Raw = raw;
-		}
-
-		public override void Sample()
-		{
-			Value = Raw ? Input.GetAxisRaw( Sampler ) : Input.GetAxis( Sampler );
-			Held = Value > 0;
-		}
-
-		public override void Clear()
-		{
-			Value = 0;
-		}
-	}
-
-	public class Action : Bind
-	{
-		public KeyCode Key { get; }
-
-		public Event OnPressed { get; }
-		public Event OnReleased { get; }
-
-		public Action( string name, KeyCode key ) : base( name )
-		{
-			Key = key;
-		}
-
-		public Action( string name, KeyCode key, Event onPressed = null, Event onReleased = null ) : this( name, key )
-		{
-			OnPressed = onPressed;
-			OnReleased = onReleased;
-		}
-
-		public override void Sample()
-		{
-			Pressed = Input.GetKeyDown( Key );
-			Held = Input.GetKey( Key );
-			Released = Input.GetKeyUp( Key );
-
-			if ( Pressed )
-				OnPressed?.Invoke();
-
-			if ( Released )
-				OnReleased?.Invoke();
-		}
-
-		public override void Clear()
-		{
-			Pressed = false;
-			Held = false;
-			Released = false;
-		}
-	}
-
-	public abstract class Bind
-	{
-		public string Name { get; }
-
-		public Bind( string name )
-		{
-			Name = name;
-		}
-
-
-		public abstract void Sample();
-		public abstract void Clear();
-
-		// Networking
-		public virtual void Write() { }
-		public virtual void Read() { }
-
-		public float Value { get; protected set; }
-		public bool Pressed { get; protected set; }
-		public bool Held { get; protected set; }
-		public bool Released { get; protected set; }
 	}
 }
