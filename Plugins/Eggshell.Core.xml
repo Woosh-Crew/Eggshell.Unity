@@ -1150,6 +1150,11 @@
         </member>
         <member name="M:Eggshell.Libraries.With``1">
             <summary>
+            Gets all Components of T from every library
+            </summary>
+        </member>
+        <member name="M:Eggshell.Libraries.Has``1">
+            <summary>
             Gets all Libraries with the given components
             </summary>
         </member>

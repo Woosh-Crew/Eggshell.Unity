@@ -139,6 +139,12 @@
             injection (Such as origin)
             </summary>
         </member>
+        <member name="M:Eggshell.Resources.Resource.Override``1(``0)">
+            <summary>
+            Overrides the source asset to be the supplied value. Doesn't work
+            if the source is already loaded. (Duhh..)
+            </summary>
+        </member>
         <member name="M:Eggshell.Resources.Resource.Load``1(System.Boolean)">
             <summary>
             Grabs the loaded asset from memory or will open a stream

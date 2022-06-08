@@ -85,7 +85,7 @@ namespace Eggshell.Unity
             Position = Vector3.zero,
         };
 
-        public override void OnUpdate()
+        protected override void OnUpdate()
         {
             if (Terminal.Editor || Camera == null || Builder == null)
             {

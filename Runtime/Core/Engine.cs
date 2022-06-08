@@ -40,7 +40,7 @@ namespace Eggshell.Unity
 
         // Module Callbacks
 
-        public override void OnReady()
+        protected override void OnReady()
         {
             Game = Setup();
 
@@ -49,12 +49,12 @@ namespace Eggshell.Unity
 #endif
         }
 
-        public override void OnUpdate()
+        protected override void OnUpdate()
         {
             Game?.OnUpdate();
         }
 
-        public override void OnShutdown()
+        protected override void OnShutdown()
         {
 #if !UNITY_EDITOR
 			OnExiting();
