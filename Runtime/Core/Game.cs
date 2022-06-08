@@ -1,9 +1,8 @@
-﻿// Roslyn
+﻿// Roslyn Analyzers
 #pragma warning disable IDE1006 
 
 namespace Eggshell.Unity
 {
-
     /// <summary>
     /// The Game class is the entry point into your unity project. Override
     /// this to provide custom logic for application wide specifics.
@@ -53,7 +52,18 @@ namespace Eggshell.Unity
         /// </summary>
         public interface Callbacks
         {
+            /// <summary>
+            /// A callback for when we actually start playing the game. In editor this means
+            /// we have switched to playmode, and at runtime this means the application has
+            /// started.
+            /// </summary>
             void OnPlaying();
+
+            /// <summary>
+            /// A callback for when we actually have stopped playing the game. In editor this
+            /// means we have left playmode, and at runtime it means the application is 
+            /// shutting down.
+            /// </summary>
             void OnExiting();
         }
 

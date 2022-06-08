@@ -81,16 +81,35 @@ namespace Eggshell.Unity
         /// of how tripods are controlled and built. Override this in your
         /// game to implement your own custom logic.
         /// </summary>
+        [Singleton]
         public class Builder : IComponent<Game>
         {
+            /// <summary>
+            /// The game that this component is attached too. Is used by
+            /// the components database, to keep track of whats where.
+            /// </summary>
+            public Game Attached { get; set; }
+
+            /// <summary>
+            /// The current tripod that is being processed by this
+            /// builder component.
+            /// </summary>
             protected Tripod Current { get; set; }
 
+            /// <summary>
+            /// What should happened when the camera has been created? 
+            /// use this for adding extra MonoBehaviour components to it.
+            /// </summary>
             public virtual void Created(Camera camera)
             {
                 camera.renderingPath = RenderingPath.DeferredShading;
                 camera.gameObject.AddComponent<FlareLayer>();
             }
 
+            /// <summary>
+            /// A Callback from the Camcorder when we start building the
+            /// tripod setup this frame. (Happens every frame!)
+            /// </summary>
             public virtual void Build(ref Setup setup)
             {
                 var cam = Active();
@@ -106,16 +125,20 @@ namespace Eggshell.Unity
                 OnSetup(ref setup);
             }
 
+            /// <summary>
+            /// Get the active tripod where ever that may be, override this
+            /// to provide a custom way to get tripods from your own builder.
+            /// </summary>
             protected virtual Tripod Active() { return null; }
 
+            /// <summary>
+            /// A Callback for when Build is complete and its safe to mutate the
+            /// tripod setup without breaking it.
+            /// </summary>
             protected virtual void OnSetup(ref Setup setup)
             {
                 Effect.Apply(ref setup);
             }
-
-            // IComponent			
-
-            public void OnAttached(Game item) { }
         }
 
         // Effect
