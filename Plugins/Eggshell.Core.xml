@@ -27,7 +27,7 @@
         <member name="M:Eggshell.Bootstrap.Shutdown">
             <summary>
             Invoke Shutdown, to run the shutdown call chain on all modules, you
-            can override this by overriding the protected method OnShutdown;
+            can override this by overriding the protected method OnShutdown
             </summary>
         </member>
         <member name="M:Eggshell.Bootstrap.OnStart">
@@ -618,7 +618,8 @@
         </member>
         <member name="P:Eggshell.Project.Booted">
             <summary>
-            Has Eggshell already been booted up and initialized?
+            Has Eggshell already been booted up and initialized? From
+            a preexisting bootstrap?
             </summary>
         </member>
         <member name="P:Eggshell.Project.Bootstrap">
@@ -986,17 +987,20 @@
         </member>
         <member name="P:Eggshell.Libraries.Item(System.Int32)">
             <summary>
-            Finds a library by its deterministic Id
+            Finds a library by its deterministic Id, which is generated
+            at compile time, from the classroom
             </summary>
         </member>
         <member name="P:Eggshell.Libraries.Item(System.String)">
             <summary>
-            Finds a library by its name
+            Finds a library by its name, which that string gets converted
+            converted to its deterministic int id (hashed string)
             </summary>
         </member>
         <member name="P:Eggshell.Libraries.Item(System.Type)">
             <summary>
-            Finds a library by its type
+            Finds a library by its type, where it just does a linq operation to
+            find the first type that equals the one in the library
             </summary>
         </member>
         <member name="M:Eggshell.Libraries.Find(System.Type)">
@@ -1018,7 +1022,7 @@
             </summary>
         </member>
         <member name="M:Eggshell.Libraries.Find``1">
-            <inheritdoc cref="M:Eggshell.Libraries.Find``1"/>
+            <inheritdoc cref="M:Eggshell.Libraries.Find(System.Type)"/>
         </member>
         <member name="M:Eggshell.Libraries.Find``1(System.Func{Eggshell.Library,System.Boolean})">
             <inheritdoc cref="M:Eggshell.Libraries.Find(System.Type,System.Func{Eggshell.Library,System.Boolean})"/>
@@ -1116,7 +1120,7 @@
         </member>
         <member name="M:Eggshell.Library.Construct">
             <summary>
-            Constructs this IObject, can be overriden to provide custom logic.
+            Constructs this IObject, can be overridden to provide custom logic.
             such as using a custom constructor, or setting off events when
             this library has been constructed. Use wisely!
             </summary>
@@ -1297,6 +1301,51 @@
             An operator is a operation that is performed in the editor. Operators
             can be searched for in the editor is well. It is also recommended you
             use operators for tools that do actions / operations.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Operator.Run(System.String)">
+            <summary>
+            Runs an operator based off its Library name. Not caring about
+            any callback that it could potentially have.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Operator.Run``1(System.String,``0)">
+            <summary>
+            Runs an operator based off its Library name, with a delegate
+            generic arg, representing the callback that is invoked.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Operator.Run(System.String,System.Action)">
+            <summary>
+            Runs an operator based off its Library name, with a predefined
+            action which represents the callback.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Operator.Run``1(System.String,System.Action{``0})">
+            <summary>
+            Runs an operator based off its Library name, with a predefined
+            action with the generic args based off the ones fed through the
+            method, which represents the callback.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Operator.Run``2(System.String,System.Action{``0,``1})">
+            <summary>
+            Runs an operator based off its Library name, with a predefined
+            action with the generic args based off the ones fed through the
+            method, which represents the callback.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Operator.Run``3(System.String,System.Action{``0,``1,``2})">
+            <summary>
+            Runs an operator based off its Library name, with a predefined
+            action with the generic args based off the ones fed through the
+            method, which represents the callback.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Operator.Find``1(System.String)">
+            <summary>
+            Finds an operator based off the inputted name, creates it and
+            returns the arg of T. So you can manually invoke it.
             </summary>
         </member>
         <member name="T:Eggshell.Assert">
