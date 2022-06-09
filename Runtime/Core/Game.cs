@@ -12,8 +12,16 @@ namespace Eggshell.Unity
     {
         public Library ClassInfo { get; }
 
+        /// <summary>
+        /// Creates a new game with the default tripod builder component, incredibly
+        /// useful for quickly setting up a game.  
+        /// </summary>
         public Game() : this(new()) { }
 
+        /// <summary>
+        /// Creates a new game with a tripod component that is used for building
+        /// the tripods. This is the main constructor.
+        /// </summary>
         public Game(Tripod.Builder tripods = null)
         {
             ClassInfo = Library.Register(this);

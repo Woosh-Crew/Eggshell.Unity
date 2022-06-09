@@ -15,7 +15,7 @@ namespace Eggshell.Unity.Internal
     /// Bootstrap for when you are using the UnityEditor, this will only
     /// compile (the body of the class) when you are in the editor.
     /// </summary>
-    internal class UnityEditor : UnityStandalone
+    public class UnityEditor : UnityStandalone
     {
 #if UNITY_EDITOR
 
@@ -29,6 +29,7 @@ namespace Eggshell.Unity.Internal
         {
             EditorApplication.quitting += Shutdown;
             EditorApplication.playModeStateChanged += OnPlaymode;
+            Application.focusChanged += Focus;
 
             Hook();
         }
@@ -42,6 +43,7 @@ namespace Eggshell.Unity.Internal
 
             EditorApplication.quitting -= Shutdown;
             EditorApplication.playModeStateChanged -= OnPlaymode;
+            Application.focusChanged -= Focus;
 
             Unhook();
         }
@@ -69,7 +71,7 @@ namespace Eggshell.Unity.Internal
     /// A bootstrap for when you are in a standalone unity game process.
     /// This isn't the bootstrap that is used while in the editor.
     /// </summary>
-    internal class UnityStandalone : Bootstrap
+    public class UnityStandalone : Bootstrap
     {
         static UnityStandalone()
         {
@@ -93,6 +95,8 @@ namespace Eggshell.Unity.Internal
         protected override void OnStart()
         {
             Application.quitting += Shutdown;
+            Application.focusChanged += Focus;
+
             Hook();
         }
 
@@ -104,6 +108,8 @@ namespace Eggshell.Unity.Internal
             }
 
             Application.quitting -= Shutdown;
+            Application.focusChanged -= Focus;
+
             Unhook();
         }
 

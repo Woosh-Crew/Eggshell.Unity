@@ -12,10 +12,21 @@ using Scene = UnityEngine.SceneManagement.Scene;
 
 namespace Eggshell.Unity
 {
+    public class Bundle : Map.File
+    {
+        public override void Load(Stream stream)
+        {
+        }
+
+        public override void Unload()
+        {
+        }
+    }
+
     [Group("Maps"), Path("maps", "assets://Maps/")]
     public class Map : IAsset
     {
-        public static string[] Compatible { get; } = Library.Database.With<Archive>().Select(e => e.Extension).ToArray();
+        public static Archive[] Compatible { get; } = Library.Database.With<Archive>(e => e.Inherits<File>()).ToArray();
 
         public Library ClassInfo { get; }
         public Components<Map> Components { get; }
@@ -51,17 +62,11 @@ namespace Eggshell.Unity
 
         public bool Setup(string extension)
         {
-            if (Compatible.Contains(extension, StringComparer.CurrentCultureIgnoreCase))
-            {
-                // Get the correct binder using reflection
-                Binder = Library.Database.With<Archive>()
-                                        .First(e => extension == e.Extension)
-                                        .Attached.Create<File>();
+            // Get the correct binder using reflection
+            Binder = Array.Find(Compatible, e => e.Extension.Equals(extension, StringComparison.OrdinalIgnoreCase))?
+                            .Attached.Create<File>();
 
-                return Binder != null;
-            }
-
-            return false;
+            return Binder != null;
         }
 
         void IAsset.Load(Stream stream)
