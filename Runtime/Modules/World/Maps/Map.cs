@@ -12,13 +12,23 @@ using Scene = UnityEngine.SceneManagement.Scene;
 
 namespace Eggshell.Unity
 {
+    [Archive(Extension = "ubundle")]
     public class Bundle : Map.File
     {
-        public override void Load(Stream stream)
+        public Library ClassInfo { get; }
+        public Scene Scene { get; }
+
+        public Bundle()
         {
+            ClassInfo = Library.Register(this);
         }
 
-        public override void Unload()
+        public void Load(Stream stream)
+        {
+            var bundle = UnityEngine.AssetBundle.LoadFromStream(stream);
+        }
+
+        public void Unload()
         {
         }
     }
@@ -31,7 +41,7 @@ namespace Eggshell.Unity
         public Library ClassInfo { get; }
         public Components<Map> Components { get; }
 
-        private File Binder { get; set; }
+        private File Bundle { get; set; }
 
         public Map()
         {
@@ -42,17 +52,12 @@ namespace Eggshell.Unity
         }
 
         [Group("Maps")]
-        public abstract class File : IObject
+        public interface File : IObject
         {
-            public Library ClassInfo { get; }
+            Scene Scene { get; }
 
-            public File()
-            {
-                ClassInfo = Library.Register(this);
-            }
-
-            public abstract void Load(Stream stream);
-            public abstract void Unload();
+            void Load(Stream stream);
+            void Unload();
         }
 
         // IAsset - Resource
@@ -63,16 +68,16 @@ namespace Eggshell.Unity
         public bool Setup(string extension)
         {
             // Get the correct binder using reflection
-            Binder = Array.Find(Compatible, e => e.Extension.Equals(extension, StringComparison.OrdinalIgnoreCase))?
+            Bundle = Array.Find(Compatible, e => e.Extension.Equals(extension, StringComparison.OrdinalIgnoreCase))?
                             .Attached.Create<File>();
 
-            return Binder != null;
+            return Bundle != null;
         }
 
         void IAsset.Load(Stream stream)
         {
             // Tell Provider to load Map
-            Binder.Load(stream);
+            Bundle.Load(stream);
             OnLoad();
         }
 
@@ -93,7 +98,7 @@ namespace Eggshell.Unity
         void IAsset.Unload()
         {
             // Tell Provider to unload Map
-            Binder.Unload();
+            Bundle.Unload();
             OnUnload();
         }
 

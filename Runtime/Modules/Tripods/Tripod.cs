@@ -97,6 +97,17 @@ namespace Eggshell.Unity
             protected Tripod Current { get; set; }
 
             /// <summary>
+            /// The Default Tripod Setup, that is used for the initial 
+            /// setup when building the tripod.
+            /// </summary>
+            public virtual Setup Default => new()
+            {
+                FieldOfView = 68,
+                Rotation = Quaternion.identity,
+                Position = Vector3.zero,
+            };
+
+            /// <summary>
             /// What should happened when the camera has been created? 
             /// use this for adding extra MonoBehaviour components to it.
             /// </summary>
@@ -123,6 +134,22 @@ namespace Eggshell.Unity
 
                 Current?.OnBuild(ref setup);
                 OnSetup(ref setup);
+            }
+
+            /// <summary>
+            /// Apply's the Setup to the Main Camera. Override this to provide
+            /// some fully awesome custom logic...
+            /// </summary>
+            public virtual void Apply(Camera camera, Setup setup)
+            {
+                var trans = camera.transform;
+                trans.position = setup.Interpolation > 0 ? Vector3.Lerp(trans.position, setup.Position, setup.Interpolation * Time.deltaTime) : setup.Position;
+                trans.rotation = setup.Interpolation > 0 ? Quaternion.Slerp(trans.rotation, setup.Rotation, setup.Interpolation * Time.deltaTime) : setup.Rotation;
+
+                camera.fieldOfView = setup.Damping > 0 ? Mathf.Lerp(camera.fieldOfView, setup.FieldOfView, setup.Damping * Time.deltaTime) : setup.FieldOfView;
+
+                camera.farClipPlane = setup.Clipping.y;
+                camera.nearClipPlane = setup.Clipping.x;
             }
 
             /// <summary>

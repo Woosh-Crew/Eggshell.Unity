@@ -43,6 +43,20 @@
             can override this by overriding the protected method OnShutdown
             </summary>
         </member>
+        <member name="T:Eggshell.Bootstrap.Callbacks">
+            <summary>
+            Callbacks specific for the bootstrap, these mostly only get called as
+            the project is bootstrapping. great for injecting high level logic into
+            low level code, or for pissing off modules you dont need in your project
+            </summary>
+        </member>
+        <member name="M:Eggshell.Bootstrap.Callbacks.OnModule(Eggshell.IModule)">
+            <summary>
+            Everytime a module requests to be created, it'll call this. So you
+            can override which modules are meant to be initialized at a bootstrap
+            level. Incredibly useful for removing modules, without breaking anything;
+            </summary>
+        </member>
         <member name="M:Eggshell.Bootstrap.OnStart">
             <summary>
             OnStart is called by Boot() before any of the modules have been
@@ -55,18 +69,17 @@
             You should never need to override this, but just in case it is.
             </summary>
         </member>
-        <member name="M:Eggshell.Bootstrap.OnValidate(Eggshell.IModule)">
-            <summary>
-            Everytime a module requests to be created, it'll call this. So you
-            can override which modules are meant to be initialized at a bootstrap
-            level. Incredibly useful for removing modules, without breaking anything;
-            </summary>
-        </member>
         <member name="M:Eggshell.Bootstrap.OnBooted">
             <summary>
             Called when eggshell is ready, and the bootstrap has done what it
             needs to do. This should call OnReady on all modules, so they can
             start there systems.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Bootstrap.OnFocus(System.Boolean)">
+            <summary>
+            Called when the application changes its focus. Tells all the modules
+            that the focus has changed.
             </summary>
         </member>
         <member name="M:Eggshell.Bootstrap.OnUpdate">
@@ -658,6 +671,12 @@
             Modules are automatically created by eggshell from the bootstrap
             on application startup (when you crack the egg). Modules allow incredibly
             easy dependency injection, as well as easily creating scalable applications 
+            </summary>
+        </member>
+        <member name="P:Eggshell.Module.All">
+            <summary>
+            All the registered modules, that have been created by using the Create()
+            function. You should use this for calling module only callbacks.
             </summary>
         </member>
         <member name="M:Eggshell.Module.Get``1">

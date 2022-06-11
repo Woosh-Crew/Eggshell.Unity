@@ -171,7 +171,7 @@ namespace Eggshell.Unity.Internal
 
             if (entry.Level.Contains("Error") || entry.Level.Contains("Exception"))
             {
-                Debug.LogError(entry.Message);
+                Debug.LogError($"{entry.Message}\n\n{entry.Trace}\n\n");
                 return;
             }
 

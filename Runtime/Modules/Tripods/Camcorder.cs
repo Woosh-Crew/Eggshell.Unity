@@ -6,13 +6,33 @@ using UnityEngine.Rendering.PostProcessing;
 
 namespace Eggshell.Unity
 {
+    /// <summary>
+    /// The Camcorder is responsible for controlling the output of the Tripod 
+    /// call stack. It applies the transform to the main camera that was built
+    /// by the Tripod call-stack, as well as handling any post processing.
+    /// </summary>
     public sealed class Camcorder : Module, Game.Callbacks
     {
+        /// <summary>
+        /// The camera that the camcorder is using to translate, and change the
+        /// options of. Which includes FOV, Clipping, Position, Rotation, etc.
+        /// </summary>
         public Camera Camera { get; private set; }
 
 #if POST_FX
 
+        /// <summary>
+        /// This is the Layer that gets generated / created when the Camcorder
+        /// creates the Main Camera. Only appears if Post Processing is added
+        /// the project.
+        /// </summary>
         public PostProcessLayer Layer { get; private set; }
+
+        /// <summary>
+        /// The Debug layer for the post processing layer that gets generated
+        /// when the Camcorder creates the camera. Only appears if Post 
+        /// Processing is added the project.
+        /// </summary>
         public PostProcessDebug Debug { get; private set; }
 
 #endif
@@ -22,16 +42,16 @@ namespace Eggshell.Unity
 
         public void OnPlaying()
         {
-            Builder = Engine.Game.Components.Get<Tripod.Builder>();
-
             if (Builder == null)
             {
                 // Not valid Game
                 return;
             }
 
+            Setup = Builder.Default;
+
             // Setup Camera
-            var go = new GameObject("Camera");
+            var go = new GameObject("Main Camera");
             go.AddComponent<AudioListener>();
 
             Camera = go.AddComponent<Camera>();
@@ -53,6 +73,7 @@ namespace Eggshell.Unity
 
 #endif
 
+            Builder.Created(Camera);
             GameObject.DontDestroyOnLoad(go);
         }
 
@@ -65,25 +86,27 @@ namespace Eggshell.Unity
             }
 
             GameObject.Destroy(Camera.gameObject);
-            Setup = Default;
 
+            Setup = default;
             Camera = null;
-            Builder = null;
         }
 
         // Camcorder Loop
         // --------------------------------------------------------------------------------------- //
 
-        public Tripod.Builder Builder { get; private set; }
+        /// <summary>
+        /// The Tripod Builder this Camcorder is using for starting the initial
+        /// call chain for building tripods. This gets applied automatically from
+        /// your game class, Tripod.Builder is a Component on it.
+        /// </summary>
+        public Tripod.Builder Builder => Engine.Game.Components.Get<Tripod.Builder>();
 
-        public Tripod.Setup Setup { get; private set; } = Default;
-
-        private static Tripod.Setup Default => new()
-        {
-            FieldOfView = 68,
-            Rotation = Quaternion.identity,
-            Position = Vector3.zero,
-        };
+        /// <summary>
+        /// The current Tripod Setup that is being processed. This is immutable.
+        /// But incredibly useful for getting info about the setup, even without being
+        /// inside the call chain.
+        /// </summary>
+        public Tripod.Setup Setup { get; private set; }
 
         protected override void OnUpdate()
         {
@@ -101,21 +124,10 @@ namespace Eggshell.Unity
 
             // Build the setup, from game.
             Builder.Build(ref setup);
-            Apply(Camera, setup);
+            Builder.Apply(Camera, setup);
 
+            // Reapply the setup
             Setup = setup;
-        }
-
-        private void Apply(Camera camera, Tripod.Setup setup)
-        {
-            var trans = camera.transform;
-            trans.position = setup.Interpolation > 0 ? Vector3.Lerp(trans.position, setup.Position, setup.Interpolation * Time.deltaTime) : setup.Position;
-            trans.rotation = setup.Interpolation > 0 ? Quaternion.Slerp(trans.rotation, setup.Rotation, setup.Interpolation * Time.deltaTime) : setup.Rotation;
-
-            camera.fieldOfView = setup.Damping > 0 ? Mathf.Lerp(camera.fieldOfView, setup.FieldOfView, setup.Damping * Time.deltaTime) : setup.FieldOfView;
-
-            camera.farClipPlane = setup.Clipping.y;
-            camera.nearClipPlane = setup.Clipping.x;
         }
     }
 }
