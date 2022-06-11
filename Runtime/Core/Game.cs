@@ -1,6 +1,4 @@
-﻿using UnityEngine.SceneManagement;
-
-// Roslyn Analyzers
+﻿// Roslyn Analyzers
 #pragma warning disable IDE1006 
 
 namespace Eggshell.Unity
