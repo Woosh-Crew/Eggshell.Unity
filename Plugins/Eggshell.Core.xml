@@ -510,6 +510,31 @@
             Just gives us the raw data from a file at a path
             </summary>
         </member>
+        <member name="T:Eggshell.IO.Pathable">
+            <summary>
+            Registers a Path to be unusable in the pathing system. is used like 
+            {Short://}.
+            </summary>
+        </member>
+        <member name="P:Eggshell.IO.Pathable.Short">
+            <summary>
+            The Shorthand that is used when registering the path and then 
+            used like this "{value}://", excellent for quickly getting the path
+            of something, without knowing where it actually is.
+            </summary>
+        </member>
+        <member name="P:Eggshell.IO.Pathable.Full">
+            <summary>
+            The full path that the short path maps too, you can nest short paths 
+            in this full path. They will unravel when asking for the path.
+            </summary>
+        </member>
+        <member name="M:Eggshell.IO.Pathable.#ctor(System.String,System.String)">
+            <summary>
+            Sets up the component, Hand = Shorthand, Full = Absolute path that allows
+            nested shorthand. 
+            </summary>
+        </member>
         <member name="T:Eggshell.IObject">
             <summary>
             Stores class information, used for networking, meta data, etc.
@@ -1201,6 +1226,12 @@
             <summary>
             Allows a member to have injected components into it. Basically
             builds the source tree to allow custom logic to be injected
+            </summary>
+        </member>
+        <member name="P:Eggshell.Order.Value">
+            <summary>
+            The value that was created by the attribute that signifies
+            what order this class or what ever should be in.
             </summary>
         </member>
         <member name="T:Eggshell.LibraryAttribute">

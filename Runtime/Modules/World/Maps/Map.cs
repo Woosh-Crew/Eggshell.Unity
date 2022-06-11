@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Eggshell.IO;
 using Eggshell.Resources;
 
 // Internal Scene Management
@@ -33,7 +34,7 @@ namespace Eggshell.Unity
         }
     }
 
-    [Group("Maps"), Path("maps", "assets://Maps/")]
+    [Group("Maps")]
     public class Map : IAsset
     {
         public static Archive[] Compatible { get; } = Library.Database.With<Archive>(e => e.Inherits<File>()).ToArray();

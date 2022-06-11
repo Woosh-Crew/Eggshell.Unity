@@ -100,9 +100,10 @@ namespace Eggshell.Unity
             /// The Default Tripod Setup, that is used for the initial 
             /// setup when building the tripod.
             /// </summary>
-            public virtual Setup Default => new()
+            public virtual Setup Default { get; } = new()
             {
                 FieldOfView = 68,
+                Clipping = new Vector2(0.1f, 700),
                 Rotation = Quaternion.identity,
                 Position = Vector3.zero,
             };

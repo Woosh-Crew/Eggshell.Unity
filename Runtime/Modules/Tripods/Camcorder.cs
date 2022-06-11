@@ -119,8 +119,8 @@ namespace Eggshell.Unity
             var setup = Setup;
 
             // Default FOV
-            setup.FieldOfView = 68;
-            setup.Clipping = new(0.1f, 700);
+            setup.FieldOfView = Builder.Default.FieldOfView;
+            setup.Clipping = Builder.Default.Clipping;
 
             // Build the setup, from game.
             Builder.Build(ref setup);

@@ -114,10 +114,12 @@ namespace Eggshell.Unity
         /// </summary>
         internal void OnLoop()
         {
+#if UNITY_EDITOR
             if (!IsPlaying)
             {
                 return;
             }
+#endif
 
             Game?.OnUpdate();
 
