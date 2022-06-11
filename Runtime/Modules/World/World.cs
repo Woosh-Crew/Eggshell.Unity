@@ -17,6 +17,10 @@ namespace Eggshell.Unity
             // Unloads all maps
         }
 
+        void Game.Callbacks.OnLoop()
+        {
+        }
+
         // Map Management
         // --------------------------------------------------------------------------------------- //
 

@@ -51,7 +51,7 @@ namespace Eggshell.Unity
 
         protected override void OnUpdate()
         {
-            Game?.OnUpdate();
+            OnLoop();
         }
 
         protected override void OnShutdown()
@@ -64,13 +64,17 @@ namespace Eggshell.Unity
         // Runtime Game
         // --------------------------------------------------------------------------------------- //
 
+        public bool IsPlaying { get; private set; }
+
         /// <summary>
         /// A Callback for when we have switched to play mode (in the editor)
         /// or when we have launched the application and are ready to start
         /// playing (at standalone)
         /// </summary>
-        public void OnPlaying()
+        internal void OnPlaying()
         {
+            IsPlaying = true;
+
             (Game ??= Setup()).OnReady();
 
             foreach (var module in All)
@@ -78,15 +82,16 @@ namespace Eggshell.Unity
                 (module as Game.Callbacks)?.OnPlaying();
             }
 
-            Terminal.Log.Entry("Entering the Game", Level);
+            Terminal.Log.Entry($"Entering the Game [{Game.ClassInfo.Title}]", Level);
         }
 
         /// <summary>
         /// A Callback for when we are exiting play mode (in the editor)
         /// or when we are shutting down the application (at standalone)
         /// </summary>
-        public void OnExiting()
+        internal void OnExiting()
         {
+            Game?.Components.Clear();
             Game?.OnShutdown();
 
             foreach (var module in All)
@@ -94,9 +99,32 @@ namespace Eggshell.Unity
                 (module as Game.Callbacks)?.OnExiting();
             }
 
+            // Delete Game
+            Library.Unregister(Game);
             Game = null;
 
-            Terminal.Log.Entry("Exiting the Game", Level);
+            IsPlaying = false;
+
+            Terminal.Log.Entry("Exiting Game", Level);
+        }
+
+        /// <summary>
+        /// A Callback for when a game loop process should happen. This usually
+        /// gets called every frame while playing the game.
+        /// </summary>
+        internal void OnLoop()
+        {
+            if (!IsPlaying)
+            {
+                return;
+            }
+
+            Game?.OnUpdate();
+
+            foreach (var module in All)
+            {
+                (module as Game.Callbacks)?.OnLoop();
+            }
         }
 
         /// <summary>
@@ -114,7 +142,6 @@ namespace Eggshell.Unity
                 return null;
             }
 
-            Terminal.Log.Entry($"Setting up {game.ClassInfo.Title} as the Game", Level);
             return game;
         }
     }

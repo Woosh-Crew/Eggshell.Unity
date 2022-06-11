@@ -99,7 +99,7 @@ namespace Eggshell.Unity
         /// call chain for building tripods. This gets applied automatically from
         /// your game class, Tripod.Builder is a Component on it.
         /// </summary>
-        public Tripod.Builder Builder => Engine.Game.Components.Get<Tripod.Builder>();
+        public Tripod.Builder Builder => Game.Active().Components.Get<Tripod.Builder>();
 
         /// <summary>
         /// The current Tripod Setup that is being processed. This is immutable.
@@ -108,9 +108,9 @@ namespace Eggshell.Unity
         /// </summary>
         public Tripod.Setup Setup { get; private set; }
 
-        protected override void OnUpdate()
+        void Game.Callbacks.OnLoop()
         {
-            if (Terminal.Editor || Camera == null || Builder == null)
+            if (Camera == null)
             {
                 // Modules run in Editor, so don't do anything.
                 return;

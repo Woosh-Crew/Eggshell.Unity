@@ -33,6 +33,27 @@ namespace Eggshell.Unity
             };
         }
 
+        // Static API
+        // --------------------------------------------------------------------------------------- //
+
+        /// <summary>
+		/// Gets the main instance of the game without casting it. Useful for getting
+		/// modules and components.
+		/// </summary>
+		public static Game Active()
+        {
+            return Engine.Game;
+        }
+
+        /// <summary>
+        /// Gets the main instance of the game while casting it. Useful for getting
+        /// modules, components and anything that is from the inputted T type.
+        /// </summary>
+        public static T Active<T>() where T : Game
+        {
+            return Engine.Game as T;
+        }
+
         // Game Registration
         // --------------------------------------------------------------------------------------- //
 
@@ -73,6 +94,12 @@ namespace Eggshell.Unity
             /// shutting down.
             /// </summary>
             void OnExiting();
+
+            /// <summary>
+            /// A Callback for when a frame is rendered while we are playing the game. In Editor
+            /// this will do nothing unless were playing, and at runtime this is the update loop
+            /// </summary>
+            void OnLoop();
         }
 
         // Dependency Injection
