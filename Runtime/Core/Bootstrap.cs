@@ -4,10 +4,13 @@ using System;
 using System.Collections.Generic;
 using Eggshell.Diagnostics;
 using Eggshell.IO;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.LowLevel;
 using UnityEngine.PlayerLoop;
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.SceneManagement;
+#endif
 
 namespace Eggshell.Unity.Internal
 {
@@ -21,8 +24,11 @@ namespace Eggshell.Unity.Internal
 
         static UnityEditor()
         {
-            Terminal.Editor = Application.isEditor;
+            Terminal.IsEditor = Application.isEditor;
             Terminal.Log = new UnityLogger();
+
+            // -- Editor Commands
+            Terminal.Command.Push("editor.save", EditorSceneManager.SaveOpenScenes, "Saves all open scenes");
         }
 
         protected override void OnStart()
@@ -50,7 +56,7 @@ namespace Eggshell.Unity.Internal
 
         private void OnPlaymode(PlayModeStateChange state)
         {
-            Terminal.Editor = !EditorApplication.isPlaying;
+            Terminal.IsEditor = !EditorApplication.isPlaying;
 
             switch (state)
             {
@@ -75,6 +81,14 @@ namespace Eggshell.Unity.Internal
     {
         static UnityStandalone()
         {
+            // -- Unity Commands
+            Terminal.Command.Push("quit", Application.Quit, "Quits the application");
+            Terminal.Command.Push("unity.version", () =>
+            {
+                Terminal.Log.Info($"Using {Application.unityVersion} Unity Version");
+                return Application.unityVersion;
+            }, "Unity Version of the Application");
+
             // -- Game Specific
             Pathing.Add("game", Application.dataPath);
             Pathing.Add("assets", Application.isEditor ? "exports://" : "game://");

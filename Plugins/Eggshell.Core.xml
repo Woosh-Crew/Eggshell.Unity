@@ -413,6 +413,16 @@
             Checks if the current path is a full valid path
             </summary>
         </member>
+        <member name="M:Eggshell.IO.Pathing.IsDirectory">
+            <summary>
+            Checks if the current path is a directory
+            </summary>
+        </member>
+        <member name="M:Eggshell.IO.Pathing.IsFile">
+            <summary>
+            Checks if the current path is a file
+            </summary>
+        </member>
         <member name="M:Eggshell.IO.Pathing.Exists">
             <summary>
             Will check if the File or Directory exists
@@ -556,40 +566,34 @@
         </member>
         <member name="T:Eggshell.Converter">
             <summary>
-            Eggshell's string to object converter.
+            Eggshell's string to object converter. Converts objects by looking for a valid
+            converter using the reflection system, creates it and calls its convert method.
             </summary>
         </member>
         <member name="M:Eggshell.Converter.Convert``1(System.String)">
             <summary>
-            Converts a string to the type of T. 
+            Converts a string to the type of T. Uses eggshells reflection system to find
+            the correct converter, and uses it to convert the string to T.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Converter.TryConvert``1(System.String,``0@)">
+            <summary>
+            Trys to convert a string to the type of T. Uses eggshells reflection system to
+            find the correct converter, and uses it to convert the string to T. Returns false
+            if it failed to convert.
             </summary>
         </member>
         <member name="M:Eggshell.Converter.Convert(System.String,System.Type)">
             <summary>
-            Converts a string to an object. Based off the
-            inputted type. This uses reflection, and is pretty slow..
-            Be careful where you put this method.
+            Converts a string to an object. Based off the inputted type. Does use a little
+            bit of reflection, which might reflect on its performance.
             </summary>
         </member>
-        <member name="T:Eggshell.Coroutine">
+        <member name="M:Eggshell.Converter.TryConvert(System.String,System.Type,System.Object@)">
             <summary>
-            Coroutines are methods that can be held / waited / yielded
-            half way through it, and can sequentially perform actions over a
-            period of time, while being in the same callstack.
-            </summary>
-        </member>
-        <member name="M:Eggshell.Coroutine.Start(System.Collections.IEnumerator)">
-            <summary>
-            Adds a new coroutine to the coroutine stack. A coroutine function must
-            return IEnumerator (I know its weird) in order for it to work properly
-            </summary>
-            <param name="enumerator"></param>
-        </member>
-        <member name="M:Eggshell.Coroutine.Remove(System.Collections.IEnumerator)">
-            <summary>
-            Removes a running coroutine from the coroutine stack (If you saved a
-            reference to it!) Make sure to not call this while in a coroutine, as
-            it might break it.
+            Trys to converts a string to an object. Based off the inputted type. Does use a
+            little bit of System.Reflection, which might reflect on its performance. Returns
+            false if it failed to convert.
             </summary>
         </member>
         <member name="T:Eggshell.Dispatch">
@@ -988,7 +992,7 @@
         </member>
         <member name="P:Eggshell.Reflection.Function.Id">
             <summary>
-            The deterministic id created from <see cref="P:Eggshell.Reflection.Property`1.Name"/>,
+            The deterministic id created from <see cref="P:Eggshell.Reflection.Property.Name"/>,
             which is used in a Binary Tree / Sorted List to get functions
             by name.
             </summary>
@@ -1024,6 +1028,16 @@
             value from the parameter.
             </summary>
         </member>
+        <member name="M:Eggshell.Reflection.Function.Invoke(System.Object[])">
+            <summary>
+            Invokes this function statically.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Reflection.Function.Invoke">
+            <summary>
+            Invokes this function statically.
+            </summary>
+        </member>
         <member name="M:Eggshell.Reflection.Function.Invoke(Eggshell.IObject)">
             <summary>
             Invokes this function
@@ -1055,59 +1069,6 @@
             Finds a member by its name
             </summary>
         </member>
-        <member name="T:Eggshell.Reflection.IProperty">
-            <summary>
-            An interface that supplies a generic less property
-            for interacting with, if you don't know the type.
-            </summary>
-        </member>
-        <member name="T:Eggshell.Reflection.Property`1">
-            <summary>
-            Properties are used in libraries for defining variables
-            that can be inspected and changed. Every property has its
-            own class generated for it. So it can be ultra optimised.
-            You can also create dynamic properties that can be edited
-            at runtime, which is incredibly useful in a handful
-            of scenarios.
-            </summary>
-        </member>
-        <member name="P:Eggshell.Reflection.Property`1.Info">
-            <summary> 
-            The PropertyInfo that this property was generated for. 
-            This calls GetProperty, if it hasn't already.
-            </summary>
-        </member>
-        <member name="F:Eggshell.Reflection.Property`1._info">
-            <summary>
-            The cached property info that is generated from
-            <see cref="P:Eggshell.Reflection.Property`1.Info"/>.
-            </summary>
-        </member>
-        <member name="P:Eggshell.Reflection.Property`1.Parent">
-            <summary>
-            Where did this property come from? (This will automatically
-            pull properties and methods from this Library) - (Data is filled
-            out by source generators)
-            </summary>
-        </member>
-        <member name="P:Eggshell.Reflection.Property`1.ClassInfo">
-            <summary>
-            Property's IObject implementation for Library. as ironic
-            as that sounds. Its used for getting meta about the Property
-            </summary>
-        </member>
-        <member name="P:Eggshell.Reflection.Property`1.Components">
-            <summary>
-            Components that have been attached to this property. Allows
-            for easy storage of meta data, as well as property specific logic.
-            </summary>
-        </member>
-        <member name="M:Eggshell.Reflection.Property`1.#ctor(System.String,System.String)">
-            <summary>
-            It isn't recommended that you create a property manually, as
-            this is usually done through source generators.
-            </summary>
-        </member>
         <member name="P:Eggshell.Reflection.Property`1.Item(System.Object)">
             <summary>
             Tells the target instance to change the properties value
@@ -1121,59 +1082,131 @@
             by null, and return the value based off of that.
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property`1.Origin">
+        <member name="M:Eggshell.Reflection.Property`1.op_Implicit(Eggshell.Reflection.Property{`0})~`0">
+            <summary>
+            A nice to have implicit operator to the target type, so if we're
+            dealing with static properties, it's super easy to get them.
+            </summary>
+        </member>
+        <member name="T:Eggshell.Reflection.Property">
+            <summary>
+            Properties are used in libraries for defining variables
+            that can be inspected and changed. Every property has its
+            own class generated for it. So it can be ultra optimised.
+            You can also create dynamic properties that can be edited
+            at runtime, which is incredibly useful in a handful
+            of scenarios.
+            </summary>
+        </member>
+        <member name="P:Eggshell.Reflection.Property.Info">
+            <summary> 
+            The PropertyInfo that this property was generated for. 
+            This calls GetProperty, if it hasn't already.
+            </summary>
+        </member>
+        <member name="F:Eggshell.Reflection.Property._info">
+            <summary>
+            The cached property info that is generated from
+            <see cref="P:Eggshell.Reflection.Property.Info"/>.
+            </summary>
+        </member>
+        <member name="P:Eggshell.Reflection.Property.Parent">
+            <summary>
+            Where did this property come from? (This will automatically
+            pull properties and methods from this Library) - (Data is filled
+            out by source generators)
+            </summary>
+        </member>
+        <member name="P:Eggshell.Reflection.Property.ClassInfo">
+            <summary>
+            Property's IObject implementation for Library. as ironic
+            as that sounds. Its used for getting meta about the Property
+            </summary>
+        </member>
+        <member name="P:Eggshell.Reflection.Property.Components">
+            <summary>
+            Components that have been attached to this property. Allows
+            for easy storage of meta data, as well as property specific logic.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Reflection.Property.#ctor(System.String,System.String)">
+            <summary>
+            It isn't recommended that you create a property manually, as
+            this is usually done through source generators.
+            </summary>
+        </member>
+        <member name="P:Eggshell.Reflection.Property.Item(System.Object)">
+            <summary>
+            Tells the target instance to change the properties value
+            by the input of "from".
+            </summary>
+        </member>
+        <member name="P:Eggshell.Reflection.Property.Value">
+            <summary>
+            A helper for setting and getting static variables to a value.
+            Behind the scenes (if not overriden) will just get the indexer
+            by null, and return the value based off of that.
+            </summary>
+        </member>
+        <member name="P:Eggshell.Reflection.Property.Origin">
             <summary>
             The name of the property member that this eggshell property
             was generated from. Used when getting the property itself. 
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property`1.Name">
+        <member name="P:Eggshell.Reflection.Property.Name">
             <summary>
             The programmer friendly name of this property, that is used
             to generate a deterministic hash for the ID.
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property`1.Id">
+        <member name="P:Eggshell.Reflection.Property.Id">
             <summary>
-            The deterministic id created from <see cref="P:Eggshell.Reflection.Property`1.Name"/>,
+            The deterministic id created from <see cref="P:Eggshell.Reflection.Property.Name"/>,
             which is used in a Binary Tree / Sorted List to get properties
             by name.
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property`1.Title">
+        <member name="P:Eggshell.Reflection.Property.Title">
             <summary>
             The nice looking name for this Property. Used in UI as well as
             response from the user because they don't like looking at weird names
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property`1.Help">
+        <member name="P:Eggshell.Reflection.Property.Help">
             <summary>
             The help message that tells users about this property. This is usually
             generated from the XML documentation above a property.
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property`1.Group">
+        <member name="P:Eggshell.Reflection.Property.Group">
             <summary>
             The group that this property belongs to. This is used for getting
             all property by group, as well as other functionality depending
             on the class that this property is from.
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property`1.IsStatic">
+        <member name="P:Eggshell.Reflection.Property.IsStatic">
             <summary>
             Does this property require an instance accessor to be changed?
             Used in the value setter.
             </summary>
         </member>
-        <member name="P:Eggshell.Reflection.Property`1.Type">
+        <member name="P:Eggshell.Reflection.Property.IsReadable">
             <summary>
-            The backing type that this property is using.
+            Does this property have a getter? False if not. This is usually
+            generated by a source generator.
             </summary>
         </member>
-        <member name="M:Eggshell.Reflection.Property`1.op_Implicit(Eggshell.Reflection.Property{`0})~`0">
+        <member name="P:Eggshell.Reflection.Property.IsAssignable">
             <summary>
-            A nice to have implicit operator to the target type, so if we're
-            dealing with static properties, it's super easy to get them.
+            Does this property have a setter? False if not. Usually generated
+            by a source generator.
+            </summary>
+        </member>
+        <member name="P:Eggshell.Reflection.Property.Type">
+            <summary>
+            The backing type that this property is using.
             </summary>
         </member>
         <member name="T:Eggshell.ConstructorAttribute">
@@ -1487,13 +1520,6 @@
         <member name="M:Eggshell.Library.Create``1(Eggshell.Library)">
             <summary> <inheritdoc cref="M:Eggshell.Library.Create"/> and returns T </summary>
         </member>
-        <member name="T:Eggshell.TerminalAttribute">
-            <summary>
-            A Terminal is either a Var or Function that can be invoked through Eggshells
-            debugging library. This allows us to easily change the values or invoke functions
-            inside libraries, instanced or not.
-            </summary>
-        </member>
         <member name="M:Eggshell.LoggerExtensions.Log(System.String)">
             <summary>
             Logs a generic string straight to the active eggshell terminal logger. Will automatically
@@ -1555,13 +1581,19 @@
             bootstrap does to initialize it.
             </summary>
         </member>
-        <member name="P:Eggshell.Terminal.Developer">
+        <member name="P:Eggshell.Terminal.IsDebug">
             <summary>
             Returns true if the instance was launched in developer mode,
             meaning there was a launch arg of -dev.
             </summary>
         </member>
-        <member name="P:Eggshell.Terminal.Editor">
+        <member name="P:Eggshell.Terminal.IsHeadless">
+            <summary>
+            Was the running process launched in a headless way (meaning no
+            graphics)? Generated by the command line arguments
+            </summary>
+        </member>
+        <member name="P:Eggshell.Terminal.IsEditor">
             <summary>
             Returns true if the instance was launched in some sort of editor
             that can be used to edit assets and compile them. Set by the bootstrap

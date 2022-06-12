@@ -13,27 +13,6 @@ using Scene = UnityEngine.SceneManagement.Scene;
 
 namespace Eggshell.Unity
 {
-    [Archive(Extension = "ubundle")]
-    public class Bundle : Map.File
-    {
-        public Library ClassInfo { get; }
-        public Scene Scene { get; }
-
-        public Bundle()
-        {
-            ClassInfo = Library.Register(this);
-        }
-
-        public void Load(Stream stream)
-        {
-            var bundle = UnityEngine.AssetBundle.LoadFromStream(stream);
-        }
-
-        public void Unload()
-        {
-        }
-    }
-
     [Group("Maps")]
     public class Map : IAsset
     {
@@ -66,7 +45,7 @@ namespace Eggshell.Unity
 
         public Resource Resource { get; set; }
 
-        public bool Setup(string extension)
+        bool IAsset.Setup(string extension)
         {
             // Get the correct binder using reflection
             Bundle = Array.Find(Compatible, e => e.Extension.Equals(extension, StringComparison.OrdinalIgnoreCase))?

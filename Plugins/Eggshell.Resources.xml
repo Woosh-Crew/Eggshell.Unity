@@ -114,16 +114,10 @@
             if the source doesn't equal null)
             </summary>
         </member>
-        <member name="P:Eggshell.Resources.Resource.Source">
+        <member name="P:Eggshell.Resources.Resource.Asset">
             <summary>
             The source asset that is cached when the resource finishes
             loading. Usually used for duplicating instances of it.
-            </summary>
-        </member>
-        <member name="P:Eggshell.Resources.Resource.Instances">
-            <summary>
-            All instances of the source asset that has been cloned. You
-            get one of these when you load an asset.
             </summary>
         </member>
         <member name="P:Eggshell.Resources.Resource.Stream">
@@ -139,12 +133,6 @@
             injection (Such as origin)
             </summary>
         </member>
-        <member name="M:Eggshell.Resources.Resource.Override``1(``0)">
-            <summary>
-            Overrides the source asset to be the supplied value. Doesn't work
-            if the source is already loaded. (Duhh..)
-            </summary>
-        </member>
         <member name="M:Eggshell.Resources.Resource.Load``1(System.Boolean)">
             <summary>
             Grabs the loaded asset from memory or will open a stream
@@ -155,12 +143,6 @@
             <summary>
             Unloads this asset from memory, if it is not persistent.
             (Pass through true as an arg to forcefully unload it)
-            </summary>
-        </member>
-        <member name="M:Eggshell.Resources.Resource.Delete">
-            <summary>
-            Deletes this resource. You shouldn't need to do this unless
-            you know what you are doing. Can't be deleted if its loaded.
             </summary>
         </member>
     </members>
