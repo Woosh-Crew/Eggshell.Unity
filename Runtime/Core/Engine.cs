@@ -36,6 +36,7 @@ namespace Eggshell.Unity
         /// The current game that is in session, this will
         /// be automatically created when the application launches.
         /// </summary>
+        [ConVar]
         public static Game Game { get; private set; }
 
         // Module Callbacks

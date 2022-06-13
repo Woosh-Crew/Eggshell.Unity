@@ -6,7 +6,7 @@ namespace Eggshell.Unity.Operators
     /// This will save all open and modified scenes without asking if it
     /// should or not.
     /// </summary>
-    [Library("eggshell.ops.scenes.save"), Title("Save Modified Scenes")]
+    [Link("eggshell.ops.scenes.save"), Title("Save Modified Scenes")]
     public class SaveScenes : Operator
     {
         public override bool Valid()

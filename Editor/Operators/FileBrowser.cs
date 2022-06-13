@@ -7,7 +7,7 @@ namespace Eggshell.Unity.Operators
     /// This will open a file browser. Override this and change the constructor
     /// to suit your needs of a file browser
     /// </summary>
-    [Library("eggshell.ops.files.browser"), Title("Open File Browser")]
+    [Link("eggshell.ops.files.browser"), Title("Open File Browser")]
     public class FileBrowser : Operator<Action<string>>
     {
         public FileBrowser() : this("File Browser") { }

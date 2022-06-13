@@ -603,6 +603,18 @@
             languages. (C# - C++, vice versa)
             </summary>
         </member>
+        <member name="T:Eggshell.Dispatch.Hook">
+            <summary>
+            The hook that gets attached to a library, that allows that library
+            to receive callbacks from the dispatcher.
+            </summary>
+        </member>
+        <member name="P:Eggshell.Dispatch.Event">
+            <summary>
+            The event name that the dispatcher is looking for when invoking
+            a dispatch event.
+            </summary>
+        </member>
         <member name="P:Eggshell.Dispatch.Provider">
             <summary>
             The underlying system that controls the dispatcher. Override
@@ -915,32 +927,6 @@
             current processor and whats its doing.
             </summary>
         </member>
-        <member name="T:Eggshell.Reflection.IBinding">
-            <summary>
-            IBinding is a binding to a library. Allows you to inject logic
-            in to the library pipeline, as well as store custom library meta
-            data for use in your project. (Such as the Archive Component)
-            </summary>
-        </member>
-        <member name="M:Eggshell.Reflection.IBinding.OnRegister(Eggshell.IObject)">
-            <summary>
-            Should we register this object to the library registry? If
-            false, it'll destroy itself. If true we should be using this object 
-            </summary>
-        </member>
-        <member name="M:Eggshell.Reflection.IBinding.OnUnregister(Eggshell.IObject)">
-            <summary>
-            Cleanup any resources when this object gets removed from
-            the registry (when it is deleted).
-            </summary>
-        </member>
-        <member name="M:Eggshell.Reflection.IBinding.OnCreate">
-            <summary>
-            What should we do when this object is created through the library
-            system? Should we use a custom constructor? 
-            </summary>
-            <returns></returns>
-        </member>
         <member name="T:Eggshell.Reflection.Function">
             <summary>
             Properties are used in libraries for defining variables
@@ -959,6 +945,12 @@
             <see cref="P:Eggshell.Reflection.Function.Info"/>.
             </summary>
         </member>
+        <member name="P:Eggshell.Reflection.Function.Parameters">
+            <summary>
+            The parameters that are needed in order to invoke this Function
+            without any problems...
+            </summary>
+        </member>
         <member name="P:Eggshell.Reflection.Function.Parent">
             <summary>
             Where did this function come from? (This will automatically
@@ -972,10 +964,29 @@
             as that sounds. Its used for getting meta about the Property
             </summary>
         </member>
+        <member name="P:Eggshell.Reflection.Function.Components">
+            <summary>
+            Components that have been attached to this function. Allows
+            for easy storage of meta data, as well as function specific logic.
+            </summary>
+        </member>
         <member name="M:Eggshell.Reflection.Function.#ctor(System.String,System.String)">
             <summary>
             It isn't recommended that you create a function manually, as
             this is usually done through source generators.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Reflection.Function.OnAttached(Eggshell.Library)">
+            <summary>
+            A Callback used for initializing components, so null ref's dont
+            happen from the parent being null. 
+            </summary>
+        </member>
+        <member name="T:Eggshell.Reflection.Function.Binding">
+            <summary>
+            Binding is a binding to a function. Allows you to inject logic
+            in to the library pipeline, as well as store custom function meta
+            data for use in your project. (Such as the ConCmd Component)
             </summary>
         </member>
         <member name="P:Eggshell.Reflection.Function.Origin">
@@ -1082,6 +1093,18 @@
             by null, and return the value based off of that.
             </summary>
         </member>
+        <member name="M:Eggshell.Reflection.Property`1.Get(System.Object,`0@)">
+            <summary>
+            The getter for this property. Override this logic to provide
+            a compile time efficient getter.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Reflection.Property`1.Set(System.Object,`0)">
+            <summary>
+            The setter for this property. Override this logic to provide
+            a compile time efficient setter.
+            </summary>
+        </member>
         <member name="M:Eggshell.Reflection.Property`1.op_Implicit(Eggshell.Reflection.Property{`0})~`0">
             <summary>
             A nice to have implicit operator to the target type, so if we're
@@ -1135,6 +1158,19 @@
             this is usually done through source generators.
             </summary>
         </member>
+        <member name="M:Eggshell.Reflection.Property.OnAttached(Eggshell.Library)">
+            <summary>
+            A Callback used for initializing components, so null ref's dont
+            happen from the parent being null. 
+            </summary>
+        </member>
+        <member name="T:Eggshell.Reflection.Property.Binding">
+            <summary>
+            Binding is a binding to a property. Allows you to inject logic
+            in to the library pipeline, as well as store custom property meta
+            data for use in your project. (Such as the ConCmd Component)
+            </summary>
+        </member>
         <member name="P:Eggshell.Reflection.Property.Item(System.Object)">
             <summary>
             Tells the target instance to change the properties value
@@ -1146,6 +1182,18 @@
             A helper for setting and getting static variables to a value.
             Behind the scenes (if not overriden) will just get the indexer
             by null, and return the value based off of that.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Reflection.Property.Get(System.Object,System.Object@)">
+            <summary>
+            The getter for this property. Override this logic to provide
+            a compile time efficient getter.
+            </summary>
+        </member>
+        <member name="M:Eggshell.Reflection.Property.Set(System.Object,System.Object)">
+            <summary>
+            The setter for this property. Override this logic to provide
+            a compile time efficient setter.
             </summary>
         </member>
         <member name="P:Eggshell.Reflection.Property.Origin">
@@ -1267,10 +1315,11 @@
             what order this class or what ever should be in.
             </summary>
         </member>
-        <member name="T:Eggshell.LibraryAttribute">
+        <member name="T:Eggshell.LinkAttribute">
             <summary>
-            Add this attribute to a class to add it to the library database,
-            or to override its internal name for identification.
+            Add this attribute to a class or any Library Reflection type
+            to add it to the library database, or to override its internal
+            name for identification.
             </summary>
         </member>
         <member name="T:Eggshell.Libraries">
@@ -1409,6 +1458,32 @@
             It isn't recommended that you create the library manually, as
             this is usually done through source generators.
             </summary>
+        </member>
+        <member name="T:Eggshell.Library.Binding">
+            <summary>
+            IBinding is a binding to a library. Allows you to inject logic
+            in to the library pipeline, as well as store custom library meta
+            data for use in your project. (Such as the Archive Component)
+            </summary>
+        </member>
+        <member name="M:Eggshell.Library.Binding.OnRegister(Eggshell.IObject)">
+            <summary>
+            Should we register this object to the library registry? If
+            false, it'll destroy itself. If true we should be using this object 
+            </summary>
+        </member>
+        <member name="M:Eggshell.Library.Binding.OnUnregister(Eggshell.IObject)">
+            <summary>
+            Cleanup any resources when this object gets removed from
+            the registry (when it is deleted).
+            </summary>
+        </member>
+        <member name="M:Eggshell.Library.Binding.OnCreate">
+            <summary>
+            What should we do when this object is created through the library
+            system? Should we use a custom constructor? 
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:Eggshell.Library.#ctor(System.String,System.Type,Eggshell.Library)">
             <summary>
