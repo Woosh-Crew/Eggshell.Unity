@@ -1,43 +1,66 @@
 using System;
 using System.IO;
 using System.Linq;
-using Eggshell.IO;
 using Eggshell.Resources;
-
-// Internal Scene Management
-using Internal = UnityEngine.SceneManagement.SceneManager;
-using Scene = UnityEngine.SceneManagement.Scene;
+using UnityEngine.SceneManagement;
 
 // Roslyn Analyzers
-#pragma warning disable IDE1006 
+#pragma warning disable IDE1006
 
 namespace Eggshell.Unity
 {
+    public class Listing
+    {
+        // Skybox / 360 Ball [Just a Map]
+        public Resource<Skybox> Skybox { get; set; }
+
+        // Models
+        public Resource<Map> Interior { get; set; }
+        public Resource<Map> Exterior { get; set; }
+
+        public string Identifier { get; }
+        public string Name { get; }
+    }
+
+    public class Skybox : Map { }
+
     [Group("Maps")]
     public class Map : IAsset
     {
-        public static Archive[] Compatible { get; } = Library.Database.With<Archive>(e => e.Inherits<File>()).ToArray();
+        public static Archive[] Compatible { get; } = Library.Database.With<Archive>(e => e.Inherits<Binder>()).ToArray();
+
+        #if UNITY_EDITOR
+
+        [UnityEditor.MenuItem("Eggshell/Load Map")]
+        private static void Load()
+        {
+            if (!UnityEditor.EditorApplication.isPlaying)
+            {
+                Terminal.Log.Warning("Go into playmode, in order to load a map");
+                return;
+            }
+
+            Assets.Load<Map>(UnityEditor.EditorUtility.OpenFilePanel("Select Map", "", "")).Request(_ => { });
+        }
+
+        #endif
 
         public Library ClassInfo { get; }
-        public Components<Map> Components { get; }
-
-        private File Bundle { get; set; }
+        protected Binder Bundle { get; set; }
 
         public Map()
         {
             ClassInfo = Library.Register(this);
             Assert.IsNull(ClassInfo);
-
-            Components = new(this);
         }
 
         [Group("Maps")]
-        public interface File : IObject
+        public interface Binder : IObject
         {
             Scene Scene { get; }
 
-            void Load(Stream stream);
-            void Unload();
+            void Load(Stream stream, Action finished);
+            void Unload(Action finished);
         }
 
         // IAsset - Resource
@@ -48,58 +71,51 @@ namespace Eggshell.Unity
         bool IAsset.Setup(string extension)
         {
             // Get the correct binder using reflection
-            Bundle = Array.Find(Compatible, e => e.Extension.Equals(extension, StringComparison.OrdinalIgnoreCase))?
-                            .Attached.Create<File>();
-
+            Bundle = Array.Find(Compatible, e => e.Extension.Equals(extension, StringComparison.OrdinalIgnoreCase))?.Attached.Create<Binder>();
             return Bundle != null;
         }
 
-        void IAsset.Load(Stream stream)
+        void IAsset.Load(Stream stream, Action finished)
         {
+            OnLoading();
+            finished += OnLoad;
+
             // Tell Provider to load Map
-            Bundle.Load(stream);
-            OnLoad();
+            Bundle.Load(stream, finished);
         }
 
-        private void OnLoad()
+        protected virtual void OnLoad()
         {
-            // Invoke Events
-            foreach (var item in Components)
-            {
-                (item as Callbacks)?.OnLoad(this);
-            }
+            SceneManager.SetActiveScene(Bundle.Scene);
 
-            foreach (var item in Module.All)
+            foreach ( var module in Module.All )
             {
-                (item as Callbacks)?.OnLoad(this);
+                (module as Callbacks)?.OnLoad(this);
             }
         }
 
-        void IAsset.Unload()
+        protected virtual void OnLoading()
         {
+            foreach ( var module in Module.All )
+            {
+                (module as Callbacks)?.OnLoading(this);
+            }
+        }
+
+        void IAsset.Unload(Action finished)
+        {
+            finished += OnUnload;
+
             // Tell Provider to unload Map
-            Bundle.Unload();
-            OnUnload();
+            Bundle.Unload(finished);
         }
 
-        private void OnUnload()
+        protected virtual void OnUnload()
         {
-            // Invoke Events
-            foreach (var item in Components)
+            foreach ( var module in Module.All )
             {
-                (item as Callbacks)?.OnUnload(this);
+                (module as Callbacks)?.OnUnload(this);
             }
-
-            foreach (var item in Module.All)
-            {
-                (item as Callbacks)?.OnUnload(this);
-            }
-        }
-
-        public IAsset Clone()
-        {
-            // Single Instance Asset
-            return this;
         }
 
         // IAsset - Resource
@@ -112,6 +128,12 @@ namespace Eggshell.Unity
         public interface Callbacks
         {
             /// <summary>
+            /// A Callback for when a map starts to load, usable in Modules and
+            /// Map components. Use this for unloading old maps.
+            /// </summary>
+            void OnLoading(Map map);
+
+            /// <summary>
             /// A Callback for when a map finishes loaded, usable in Modules and
             /// Map components.
             /// </summary>
@@ -123,5 +145,7 @@ namespace Eggshell.Unity
             /// </summary>
             void OnUnload(Map map);
         }
+
     }
+
 }

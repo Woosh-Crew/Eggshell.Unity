@@ -1,26 +1,13 @@
 using System.Collections.Generic;
+
 namespace Eggshell.Unity
 {
     /// <summary>
     /// The world is responsible for keeping track of all loaded levels as
     /// well as providing network channels for entities. World > Map > Entities
     /// </summary>
-    public class World : Module, Game.Callbacks, Map.Callbacks
+    public class World : Module, Map.Callbacks
     {
-        void Game.Callbacks.OnPlaying()
-        {
-            // Set active scene as map
-        }
-
-        void Game.Callbacks.OnExiting()
-        {
-            // Unloads all maps
-        }
-
-        void Game.Callbacks.OnLoop()
-        {
-        }
-
         // Map Management
         // --------------------------------------------------------------------------------------- //
 
@@ -31,6 +18,11 @@ namespace Eggshell.Unity
         /// for getting maps. Instead of from a straight reference to it.
         /// </summary>
         public IEnumerable<Map> Loaded => _loaded;
+
+        void Map.Callbacks.OnLoading(Map map)
+        {
+            // Unload - Load if we want single or additive
+        }
 
         void Map.Callbacks.OnLoad(Map map)
         {

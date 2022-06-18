@@ -1,5 +1,7 @@
-﻿// Roslyn Analyzers
-#pragma warning disable IDE1006 
+﻿using System.Runtime.CompilerServices;
+
+// Roslyn Analyzers
+#pragma warning disable IDE1006
 
 namespace Eggshell.Unity
 {
@@ -37,10 +39,11 @@ namespace Eggshell.Unity
         // --------------------------------------------------------------------------------------- //
 
         /// <summary>
-		/// Gets the main instance of the game without casting it. Useful for getting
-		/// modules and components.
-		/// </summary>
-		public static Game Active()
+        /// Gets the main instance of the game without casting it. Useful for getting
+        /// modules and components.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Game Active()
         {
             return Engine.Game;
         }
@@ -49,6 +52,7 @@ namespace Eggshell.Unity
         /// Gets the main instance of the game while casting it. Useful for getting
         /// modules, components and anything that is from the inputted T type.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T Active<T>() where T : Game
         {
             return Engine.Game as T;

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using UnityEngine;
 
 #if POST_FX
 using UnityEngine.Rendering.PostProcessing;
@@ -99,7 +100,11 @@ namespace Eggshell.Unity
         /// call chain for building tripods. This gets applied automatically from
         /// your game class, Tripod.Builder is a Component on it.
         /// </summary>
-        public Tripod.Builder Builder => Game.Active().Components.Get<Tripod.Builder>();
+        public Tripod.Builder Builder
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Game.Active().Components.Get<Tripod.Builder>();
+        }
 
         /// <summary>
         /// The current Tripod Setup that is being processed. This is immutable.

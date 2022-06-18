@@ -42,7 +42,7 @@ namespace Eggshell.Unity.Internal
 
         protected override void OnShutdown()
         {
-            foreach (var module in Module.All)
+            foreach ( var module in Module.All )
             {
                 module.OnShutdown();
             }
@@ -58,13 +58,13 @@ namespace Eggshell.Unity.Internal
         {
             Terminal.IsEditor = !EditorApplication.isPlaying;
 
-            switch (state)
+            switch ( state )
             {
                 // Engine - Game Specific Callbacks, Could be dispatched?
-                case PlayModeStateChange.EnteredPlayMode:
+                case PlayModeStateChange.EnteredPlayMode :
                     Module.Get<Engine>().OnPlaying();
                     break;
-                case PlayModeStateChange.ExitingPlayMode:
+                case PlayModeStateChange.ExitingPlayMode :
                     Module.Get<Engine>().OnExiting();
                     break;
             }
@@ -90,13 +90,15 @@ namespace Eggshell.Unity.Internal
             }, "Unity Version of the Application");
 
             // -- Game Specific
-            Pathing.Add("game", Application.dataPath);
+            Pathing.Add("game", Application.dataPath + "/");
             Pathing.Add("assets", Application.isEditor ? "exports://" : "game://");
 
 #if UNITY_EDITOR
 
+            Pathing.Add("game", _ => Game.Active().ClassInfo.Title);
+
             // -- Editor Specific
-            Pathing.Add("project", $"{Application.dataPath}/../");
+            Pathing.Add("project", $"{Application.dataPath}/..//");
             Pathing.Add("exports", "project://Exports/");
             Pathing.Add("compiled", "exports://<game>/");
             Pathing.Add("editor", EditorApplication.applicationPath);
@@ -116,7 +118,7 @@ namespace Eggshell.Unity.Internal
 
         protected override void OnShutdown()
         {
-            foreach (var module in Module.All)
+            foreach ( var module in Module.All )
             {
                 module.OnShutdown();
             }
